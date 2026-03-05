@@ -1,219 +1,248 @@
-Tốt.
+Rất chuẩn.
 
-Cách bạn đề xuất là cách của **người làm hệ thống thật**.
-Top-down planning → Breakdown → Execution.
+Ta sẽ làm đúng quy trình quản lý chiến lược:
 
-Từ giờ chúng ta làm như một ML Platform company thật.
+> Vision → Phase → Month → Sprint → Week → Day → Hour
 
----
+Hiện tại ta đang ở level **Month Planning (Macro Level)**.
 
-# 🎯 MASTER PLAN – 9 THÁNG (ML SYSTEMS ENGINEER)
-
-Chia thành **3 Phase lớn**.
-Mỗi phase 3 tháng.
-Mỗi tháng = 2 sprint (2 tuần/sprint).
+Không đi xuống chi tiết cho đến khi Monthly Map hoàn chỉnh.
 
 ---
 
-# 🟦 PHASE 1 (Tháng 1–3)
+# 🪖 9-MONTH MASTER ROADMAP
 
-## FOUNDATION + SINGLE NODE ML PLATFORM
-
-### 🎯 Mục tiêu cuối Phase 1
-
-Bạn có:
-
-* 1 ML Platform chạy trên VPS
-* Public API
-* Logging chuẩn
-* Kafka ingestion
-* ClickHouse storage
-* MLFlow tracking
-* Basic monitoring
-* CI/CD cơ bản
-
-Nói cách khác:
-
-> Hệ thống AI end-to-end chạy được trên 1 server.
+## Mục tiêu: ML Systems Engineer – Production + AI Agent Orchestration
 
 ---
 
-## Tháng 1 – Infrastructure & Backend Core
+# 🟦 PHASE 1 (Month 1–3)
 
-### Sprint 1
+## Build Single-Node ML Platform (Foundation Hardcore)
 
-* VPS hardening
-* Docker production
-* Nginx
+---
+
+## 📆 MONTH 1 – Infrastructure & Backend Core
+
+### 🎯 Outcome cuối tháng:
+
+* VPS hardened
+* Docker production stack
+* Public FastAPI service
 * HTTPS
 * Logging chuẩn
+* PostgreSQL production-ready
+* Data modeling (Ad Event System)
+* Load testing cơ bản
+* CI/CD cơ bản
 
-### Sprint 2
+Bạn trở thành:
 
-* PostgreSQL nâng cao
-* Data modeling (Ad Event schema)
-* Indexing
-* Query optimization
-* Basic load testing
-
-🎯 Outcome: Backend & DB production-ready.
+> Production-ready backend engineer (single node)
 
 ---
 
-## Tháng 2 – Data Pipeline
+## 📆 MONTH 2 – Data Pipeline & Streaming
 
-### Sprint 3
+### 🎯 Outcome cuối tháng:
 
-* Kafka setup
-* Producer/Consumer
-* Event ingestion
-* Message schema design
+* Kafka ingestion pipeline
+* Event schema chuẩn
+* ClickHouse setup
+* Partition & aggregation strategy
+* Real-time feature transformation
+* Basic data quality check
+* Event-driven architecture
 
-### Sprint 4
+Bạn trở thành:
 
-* ClickHouse
-* Partitioning strategy
-* Aggregation
-* Materialized views
-* Event → Feature transformation
-
-🎯 Outcome: Real-time data ingestion pipeline.
+> Streaming data engineer (single node real-time system)
 
 ---
 
-## Tháng 3 – ML Lifecycle
+## 📆 MONTH 3 – ML Lifecycle Production
 
-### Sprint 5
+### 🎯 Outcome cuối tháng:
 
 * MLFlow server
-* Model experiment tracking
+* Experiment tracking
+* Model registry
 * Training pipeline
-
-### Sprint 6
-
-* Model serving
-* API prediction endpoint
+* Model serving API
 * Basic monitoring
-* CI/CD auto deploy
+* Auto Docker deploy
 
-🎯 Outcome: ML production loop hoạt động.
+Bạn trở thành:
 
----
-
-# 🟦 PHASE 2 (Tháng 4–6)
-
-## PRODUCTION ENGINEERING LEVEL
-
-Mục tiêu:
-
-> Nâng từ “chạy được” → “production-grade”
+> ML Ops Engineer (Level 1 – Single Node)
 
 ---
 
-## Tháng 4 – Observability & Reliability
+# 🟦 PHASE 2 (Month 4–6)
+
+## Production Engineering & Automation
+
+---
+
+## 📆 MONTH 4 – Observability & Reliability
+
+### 🎯 Outcome:
 
 * Prometheus metrics design
 * Grafana dashboard
+* Loki log aggregation
 * Alert rules
-* Log aggregation (Loki)
 * Health checks
 * Failure simulation
+* Incident documentation
+
+Bạn trở thành:
+
+> Engineer hiểu Reliability & Monitoring
 
 ---
 
-## Tháng 5 – Automation & Scaling
+## 📆 MONTH 5 – Orchestration & Automation
 
-* Airflow orchestration
-* Auto retraining pipeline
-* Model registry versioning
+### 🎯 Outcome:
+
+* Airflow production pipeline
+* Auto retraining
+* Model versioning strategy
+* Feature store versioning
 * Canary deployment
-* Feature version control
+* CI/CD nâng cao
+
+Bạn trở thành:
+
+> ML Platform Engineer (Automation-capable)
 
 ---
 
-## Tháng 6 – Load & Scale
+## 📆 MONTH 6 – Load, Scale & Optimization
 
-* Load testing (Locust)
-* CPU/RAM profiling
+### 🎯 Outcome:
+
+* Load testing hệ thống end-to-end
 * Bottleneck analysis
+* Resource profiling
+* Horizontal scaling (k3s)
 * Cost optimization
-* Refactor architecture
-
-🎯 Outcome:
-
-Hệ thống chịu được traffic lớn và tự động hóa.
-
----
-
-# 🟦 PHASE 3 (Tháng 7–9)
-
-## ADVANCED + AI AGENT ORCHESTRATION
-
-Đây là phần bạn “quản lý lũ AI Agent”.
-
----
-
-## Tháng 7 – Multi-Model System
-
-* Multiple model serving
-* Routing logic
-* A/B testing infra
-* Drift detection
-
----
-
-## Tháng 8 – AI Agent Layer
-
-Build:
-
-* Agent retrain trigger
-* Agent anomaly detection
-* Agent report generator
-* Agent cost analyzer
-* Agent architecture decision suggester
-
-Bạn sẽ build AI quản lý AI.
-
----
-
-## Tháng 9 – Portfolio & Senior Level Thinking
-
 * Architecture refactor
-* Design document chuẩn FAANG style
+
+Bạn trở thành:
+
+> Production-grade ML Systems Engineer
+
+---
+
+# 🟦 PHASE 3 (Month 7–9)
+
+## Advanced + AI Agent Orchestration
+
+---
+
+## 📆 MONTH 7 – Multi-Model & Experiment Platform
+
+### 🎯 Outcome:
+
+* Multi-model serving
+* Traffic routing
+* A/B testing infra
+* Model drift detection
+* Advanced feature engineering pipeline
+
+Bạn đạt:
+
+> ML Platform Level 2
+
+---
+
+## 📆 MONTH 8 – AI Agent Layer
+
+### 🎯 Outcome:
+
+Bạn build các agent:
+
+* Retrain Trigger Agent
+* Drift Analysis Agent
+* Cost Analyzer Agent
+* Auto Report Agent
+* Deployment Decision Agent
+
+AI quản lý ML Platform.
+
+Bạn đạt:
+
+> AI System Orchestrator
+
+---
+
+## 📆 MONTH 9 – Senior Level & Portfolio
+
+### 🎯 Outcome:
+
+* Refactor kiến trúc hoàn chỉnh
+* System Design document chuẩn FAANG
 * Incident postmortem sample
-* System design interview practice
-* CV & GitHub polishing
+* Load simulation scenario
+* Portfolio GitHub clean
+* CV tối ưu
+* Mock system design interview
+
+Bạn đạt:
+
+> Senior-ready ML Platform Engineer
 
 ---
 
-# 🧠 Tổng thời lượng
+# 📊 Sau 9 tháng bạn có gì?
 
-3h/ngày × 6 ngày/tuần
-≈ 18h/tuần
-≈ 72h/tháng
-≈ 650+ giờ/9 tháng
-
-Nếu làm thật → level rất cao.
-
----
-
-# 🧱 Tiếp theo
-
-Ta sẽ zoom vào:
-
-📌 Tháng 1
-→ Tách thành Sprint 1 & 2 chi tiết
-→ Sau đó tuần
-→ Sau đó từng ngày
-→ Cuối cùng từng giờ
+✔ Full ML Platform
+✔ Production-grade infra
+✔ Monitoring
+✔ CI/CD
+✔ Automation
+✔ AI Agent orchestration
+✔ Portfolio mạnh
+✔ System design capability
 
 ---
 
-Trước khi zoom xuống Tháng 1, xác nhận:
+# 🎯 Level phân bổ theo tháng
 
-Bạn muốn mỗi sprint kéo dài:
+| Month | Level                       |
+| ----- | --------------------------- |
+| 1     | Production Backend          |
+| 2     | Streaming Engineer          |
+| 3     | ML Ops L1                   |
+| 4     | Reliability Engineer        |
+| 5     | ML Platform Automation      |
+| 6     | Production ML Systems       |
+| 7     | Multi-Model Architect       |
+| 8     | AI Agent Orchestrator       |
+| 9     | Senior ML Platform Engineer |
 
-* 1 tuần?
-* 2 tuần? (chuẩn industry hơn)
+---
 
-Mình đề xuất 2 tuần/sprint để có retrospective đúng nghĩa.
+# 🧠 Bây giờ bước tiếp theo
+
+Ta sẽ zoom xuống:
+
+📌 PHASE 1
+→ rồi đến MONTH 1
+→ rồi chia Sprint
+→ rồi Week
+→ rồi Day
+→ rồi Hour
+
+Nhưng trước khi đi xuống chi tiết:
+
+Bạn có muốn điều chỉnh gì ở cấp **MONTH** không?
+
+* Thêm Cloud (GCP/AWS) sớm hơn?
+* Đẩy Kubernetes sớm hơn?
+* Thêm BigQuery ngay từ Month 1?
+* Hay giữ nguyên như trên?
+
+Xác nhận xong → ta xuống Phase 1 chi tiết.
