@@ -1,248 +1,295 @@
-Rất chuẩn.
+# 🪖 9-MONTH STRATEGIC ARCHITECTURE ROADMAP
 
-Ta sẽ làm đúng quy trình quản lý chiến lược:
-
-> Vision → Phase → Month → Sprint → Week → Day → Hour
-
-Hiện tại ta đang ở level **Month Planning (Macro Level)**.
-
-Không đi xuống chi tiết cho đến khi Monthly Map hoàn chỉnh.
+## Target: Production ML Platform Architect + AI Agent Orchestrator
 
 ---
 
-# 🪖 9-MONTH MASTER ROADMAP
+# 🟦 PHASE 1 — FOUNDATION ML PLATFORM (Month 1–3)
 
-## Mục tiêu: ML Systems Engineer – Production + AI Agent Orchestration
-
----
-
-# 🟦 PHASE 1 (Month 1–3)
-
-## Build Single-Node ML Platform (Foundation Hardcore)
+> Xây hệ thống ML chạy production trên single-node nhưng thiết kế theo hướng scale được.
 
 ---
 
-## 📆 MONTH 1 – Infrastructure & Backend Core
+## 📆 MONTH 1 — Production Infrastructure & Backend Core
 
-### 🎯 Outcome cuối tháng:
+### Strategic Focus
 
-* VPS hardened
+* Server hardening
 * Docker production stack
-* Public FastAPI service
-* HTTPS
-* Logging chuẩn
-* PostgreSQL production-ready
-* Data modeling (Ad Event System)
+* Reverse proxy + HTTPS
+* Config management
+* Structured logging
+* PostgreSQL advanced
+* Data modeling (Ad Event)
 * Load testing cơ bản
-* CI/CD cơ bản
+* CI/CD baseline
 
-Bạn trở thành:
+### Architectural Principle
 
-> Production-ready backend engineer (single node)
+* Everything containerized
+* No local-only service
+* Logging-first design
+* Document every decision
 
----
+### Outcome
 
-## 📆 MONTH 2 – Data Pipeline & Streaming
-
-### 🎯 Outcome cuối tháng:
-
-* Kafka ingestion pipeline
-* Event schema chuẩn
-* ClickHouse setup
-* Partition & aggregation strategy
-* Real-time feature transformation
-* Basic data quality check
-* Event-driven architecture
-
-Bạn trở thành:
-
-> Streaming data engineer (single node real-time system)
+Single-node production-ready backend + DB layer.
 
 ---
 
-## 📆 MONTH 3 – ML Lifecycle Production
+## 📆 MONTH 2 — Streaming & Real-Time Data Layer
 
-### 🎯 Outcome cuối tháng:
+### Strategic Focus
 
-* MLFlow server
-* Experiment tracking
+* Kafka ingestion
+* Event schema design (versioned)
+* ClickHouse columnar storage
+* Partition strategy
+* Materialized views
+* Event → feature transformation
+* Basic data validation
+
+### Architectural Principle
+
+* Event-driven design
+* Immutable event log
+* Idempotent consumers
+* Schema versioning
+
+### Outcome
+
+Real-time streaming + analytics-ready storage.
+
+---
+
+## 📆 MONTH 3 — ML Lifecycle Production
+
+### Strategic Focus
+
+* MLFlow tracking server
+* Experiment management
 * Model registry
-* Training pipeline
+* Training pipeline containerized
 * Model serving API
-* Basic monitoring
-* Auto Docker deploy
+* CI/CD auto build & deploy
+* Basic metrics exposure
 
-Bạn trở thành:
+### Architectural Principle
 
-> ML Ops Engineer (Level 1 – Single Node)
+* Model as artifact
+* Reproducible experiment
+* Version everything
+* Training ≠ serving
+
+### Outcome
+
+End-to-end ML lifecycle running production-style.
 
 ---
 
-# 🟦 PHASE 2 (Month 4–6)
+# 🟦 PHASE 2 — PRODUCTION ENGINEERING (Month 4–6)
 
-## Production Engineering & Automation
+> Nâng từ “chạy được” lên “production-grade & automation”.
 
 ---
 
-## 📆 MONTH 4 – Observability & Reliability
+## 📆 MONTH 4 — Observability & Reliability
 
-### 🎯 Outcome:
+### Strategic Focus
 
 * Prometheus metrics design
-* Grafana dashboard
-* Loki log aggregation
-* Alert rules
-* Health checks
-* Failure simulation
-* Incident documentation
+* Grafana dashboards
+* Loki centralized logging
+* Alerting rules
+* Health probes
+* Chaos simulation
+* Incident report template
 
-Bạn trở thành:
+### Architectural Principle
 
-> Engineer hiểu Reliability & Monitoring
+* If you can’t measure it, you can’t scale it
+* Metrics > Logs > Guessing
+
+### Outcome
+
+Fully observable ML platform.
 
 ---
 
-## 📆 MONTH 5 – Orchestration & Automation
+## 📆 MONTH 5 — Orchestration & Automation
 
-### 🎯 Outcome:
+### Strategic Focus
 
-* Airflow production pipeline
-* Auto retraining
-* Model versioning strategy
-* Feature store versioning
+* Airflow production orchestration
+* Auto retraining pipeline
+* Feature versioning strategy
+* Model lifecycle automation
 * Canary deployment
-* CI/CD nâng cao
+* CI/CD advanced (rollback capable)
 
-Bạn trở thành:
+### Architectural Principle
 
-> ML Platform Engineer (Automation-capable)
+* Humans should not retrain models manually
+* Everything reproducible
 
----
+### Outcome
 
-## 📆 MONTH 6 – Load, Scale & Optimization
-
-### 🎯 Outcome:
-
-* Load testing hệ thống end-to-end
-* Bottleneck analysis
-* Resource profiling
-* Horizontal scaling (k3s)
-* Cost optimization
-* Architecture refactor
-
-Bạn trở thành:
-
-> Production-grade ML Systems Engineer
+Self-operating ML pipeline.
 
 ---
 
-# 🟦 PHASE 3 (Month 7–9)
+## 📆 MONTH 6 — Scaling & Optimization
 
-## Advanced + AI Agent Orchestration
+### Strategic Focus
+
+* k3s (lightweight Kubernetes)
+* Horizontal scaling simulation
+* Load testing full stack
+* CPU/RAM profiling
+* Cost optimization strategy
+* Architecture refactor pass 1
+
+### Architectural Principle
+
+* Design for failure
+* Optimize cost per prediction
+
+### Outcome
+
+Scalable ML production system.
 
 ---
 
-## 📆 MONTH 7 – Multi-Model & Experiment Platform
+# 🟦 PHASE 3 — ADVANCED + AI AGENT LAYER (Month 7–9)
 
-### 🎯 Outcome:
+> Build system that manages itself.
 
-* Multi-model serving
+---
+
+## 📆 MONTH 7 — Multi-Model Platform
+
+### Strategic Focus
+
+* Multiple model serving
 * Traffic routing
 * A/B testing infra
-* Model drift detection
-* Advanced feature engineering pipeline
+* Drift detection logic
+* Experiment comparison automation
 
-Bạn đạt:
+### Architectural Principle
 
-> ML Platform Level 2
+* Model is replaceable
+* Traffic is controllable
+* Performance is measurable
+
+### Outcome
+
+Experiment-capable ML platform.
 
 ---
 
-## 📆 MONTH 8 – AI Agent Layer
+## 📆 MONTH 8 — AI Agent Orchestration Layer
 
-### 🎯 Outcome:
+### Strategic Focus
 
-Bạn build các agent:
+Build intelligent agents:
 
-* Retrain Trigger Agent
-* Drift Analysis Agent
+* Drift Detection Agent
+* Auto Retrain Agent
 * Cost Analyzer Agent
-* Auto Report Agent
 * Deployment Decision Agent
+* Report Generator Agent
 
-AI quản lý ML Platform.
+Agents interact via internal API + task queue.
 
-Bạn đạt:
+### Architectural Principle
 
-> AI System Orchestrator
+* Agents observe metrics
+* Agents trigger workflows
+* Human approves only high-risk actions
+
+### Outcome
+
+AI managing AI infrastructure.
 
 ---
 
-## 📆 MONTH 9 – Senior Level & Portfolio
+## 📆 MONTH 9 — Senior-Level Hardening & Portfolio
 
-### 🎯 Outcome:
+### Strategic Focus
 
-* Refactor kiến trúc hoàn chỉnh
-* System Design document chuẩn FAANG
-* Incident postmortem sample
+* Full architecture refactor
+* Design document FAANG-style
+* Postmortem sample
 * Load simulation scenario
-* Portfolio GitHub clean
-* CV tối ưu
-* Mock system design interview
+* GitHub clean-up
+* Documentation production-grade
+* Mock system design practice
 
-Bạn đạt:
+### Architectural Principle
 
-> Senior-ready ML Platform Engineer
+* Engineer who can explain system wins
+* Documentation = proof of mastery
 
----
+### Outcome
 
-# 📊 Sau 9 tháng bạn có gì?
-
-✔ Full ML Platform
-✔ Production-grade infra
-✔ Monitoring
-✔ CI/CD
-✔ Automation
-✔ AI Agent orchestration
-✔ Portfolio mạnh
-✔ System design capability
+Senior-ready ML Platform Engineer.
 
 ---
 
-# 🎯 Level phân bổ theo tháng
+# 🔥 Resource Strategy (Locked)
 
-| Month | Level                       |
-| ----- | --------------------------- |
-| 1     | Production Backend          |
-| 2     | Streaming Engineer          |
-| 3     | ML Ops L1                   |
-| 4     | Reliability Engineer        |
-| 5     | ML Platform Automation      |
-| 6     | Production ML Systems       |
-| 7     | Multi-Model Architect       |
-| 8     | AI Agent Orchestrator       |
-| 9     | Senior ML Platform Engineer |
+## VPS (16GB)
+
+* Kafka
+* ClickHouse
+* MLFlow
+* Airflow
+* Prometheus
+* Grafana
+* FastAPI
+* Redis
+* Nginx
+* k3s (later)
+
+## Google Cloud
+
+* BigQuery (analytics layer)
+* Artifact storage (optional later)
+
+## GitHub
+
+* Source control
+* CI/CD
+* Release tracking
 
 ---
 
-# 🧠 Bây giờ bước tiếp theo
+# 🧠 Strategic Discipline Rules (Permanent)
 
-Ta sẽ zoom xuống:
+1. No skipping documentation.
+2. No skipping logging.
+3. No “temporary hack”.
+4. Every month ends with demo.
+5. Every phase ends with refactor.
 
-📌 PHASE 1
-→ rồi đến MONTH 1
-→ rồi chia Sprint
-→ rồi Week
-→ rồi Day
-→ rồi Hour
+---
 
-Nhưng trước khi đi xuống chi tiết:
+# 📊 Final Expected Skill Transformation
 
-Bạn có muốn điều chỉnh gì ở cấp **MONTH** không?
+After 9 months:
 
-* Thêm Cloud (GCP/AWS) sớm hơn?
-* Đẩy Kubernetes sớm hơn?
-* Thêm BigQuery ngay từ Month 1?
-* Hay giữ nguyên như trên?
+You won’t just “know ML”.
 
-Xác nhận xong → ta xuống Phase 1 chi tiết.
+You will know:
+
+* Infrastructure
+* Distributed data
+* Streaming
+* ML lifecycle
+* Observability
+* Scaling
+* Automation
+* AI agent orchestration
+* System design at senior level
+
