@@ -188,10 +188,235 @@ Design:
 If not achieved → Phase 1 unstable.
 
 ---
+---
 
-Next descent level:
 
-We move to **Month 2 Sprint Architecture**
-(Streaming + ClickHouse layer)
 
-Proceeding.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Rồi. Vào **Month 2 – Sprint Architecture**.
+Đây là giai đoạn từ “người làm” → “người thiết kế hệ thống”.
+
+---
+
+# 🧠 MONTH 2 – SPRINT ARCHITECTURE
+
+**Theme:** From Executor → System Designer
+**Mục tiêu tháng:**
+
+* Thiết kế được hệ thống AI Agent nhiều tầng
+* Áp dụng quản lý dự án vào kiến trúc
+* Biến hệ thống thành thứ có thể scale
+* Bắt đầu tư duy “quản lý đội AI”
+
+---
+
+# 🗺 Tổng Quan 4 Sprint
+
+| Sprint   | Chủ đề              | Output chính                  |
+| -------- | ------------------- | ----------------------------- |
+| Sprint 5 | System Thinking     | Vẽ full AI Agent Architecture |
+| Sprint 6 | Agent Orchestration | Multi-Agent System hoạt động  |
+| Sprint 7 | Memory & Knowledge  | AI có trí nhớ & RAG           |
+| Sprint 8 | Project Governance  | Hệ thống có KPI + monitoring  |
+
+---
+
+# 🧱 SPRINT 5 – SYSTEM THINKING (Tuần 5)
+
+## 🎯 Mục tiêu
+
+* Hiểu kiến trúc nhiều lớp
+* Thiết kế AI Agent như một công ty
+* Viết System Blueprint v1
+
+## 🏗 Nội dung
+
+### 1️⃣ Tư duy Layer
+
+* UI Layer
+* Control Layer
+* Agent Layer
+* Memory Layer
+* Data Layer
+* Infra Layer
+
+### 2️⃣ Vẽ kiến trúc bằng Mermaid
+
+Ví dụ khung:
+
+```mermaid
+graph TD
+    User --> API
+    API --> Orchestrator
+    Orchestrator --> Agent1
+    Orchestrator --> Agent2
+    Agent1 --> Memory
+    Agent2 --> Memory
+    Memory --> Database
+```
+
+### 3️⃣ Deliverable tuần
+
+* File: `system-architecture-v1.md`
+* 3 sơ đồ kiến trúc
+* 1 bản mô tả 1000 từ
+
+---
+
+# ⚙️ SPRINT 6 – AGENT ORCHESTRATION (Tuần 6)
+
+## 🎯 Mục tiêu
+
+* Nhiều agent phối hợp
+* Có phân vai rõ ràng
+* Có workflow
+
+## 🧩 Thiết kế vai trò
+
+| Agent     | Vai trò           |
+| --------- | ----------------- |
+| Planner   | Phân tích yêu cầu |
+| Architect | Thiết kế hệ thống |
+| Coder     | Sinh code         |
+| Reviewer  | Review            |
+| Tester    | Viết test         |
+| PM Agent  | Theo dõi tiến độ  |
+
+---
+
+### 🛠 Thực hành
+
+* Xây 1 Multi-agent workflow
+* Dùng JSON để định nghĩa nhiệm vụ
+* Ghi log từng bước
+
+---
+
+## Deliverable
+
+* `multi-agent-workflow.json`
+* 1 demo project chạy end-to-end
+* Log trace đầy đủ
+
+---
+
+# 🧠 SPRINT 7 – MEMORY & KNOWLEDGE (Tuần 7)
+
+## 🎯 Mục tiêu
+
+* AI có trí nhớ dài hạn
+* Biết đọc tài liệu dự án
+* Có RAG pipeline
+
+---
+
+### Nội dung kỹ thuật
+
+* Embedding
+* Vector DB
+* Chunking strategy
+* Retrieval pipeline
+* Context window optimization
+
+---
+
+### Thực hành
+
+* Tạo Knowledge Base
+* Cho AI đọc docs project
+* Query theo ngữ cảnh
+
+---
+
+## Deliverable
+
+* `knowledge-base/`
+* Script ingest tài liệu
+* Demo hỏi đáp theo project
+
+---
+
+# 📊 SPRINT 8 – PROJECT GOVERNANCE (Tuần 8)
+
+Đây là phần quản lý lũ AI 😄
+
+## 🎯 Mục tiêu
+
+* AI có KPI
+* Có monitoring
+* Có logging
+* Có cost tracking
+
+---
+
+## Nội dung
+
+### 1️⃣ KPI cho Agent
+
+* Accuracy
+* Completion rate
+* Hallucination rate
+* Time per task
+* Cost per task
+
+### 2️⃣ Dashboard
+
+* Grafana / custom dashboard
+* Token usage
+* Error rate
+
+### 3️⃣ Incident Handling
+
+* Retry logic
+* Escalation agent
+* Alert system
+
+---
+
+## Deliverable
+
+* KPI spec document
+* Monitoring dashboard mockup
+* Incident playbook
+
+---
+
+# 🧨 Kết thúc Month 2 – Bạn sẽ trở thành:
+
+* System Designer
+* Multi-agent Architect
+* AI Team Manager
+* Có kiến trúc rõ ràng
+* Có governance framework
+
+---
+
+# 📈 Sau Month 2 bạn có:
+
+✔ AI Agent chạy thực tế
+✔ Hệ thống có kiến trúc rõ ràng
+✔ Có memory & orchestration
+✔ Có monitoring
+✔ Có KPI
+
+---
+
+Nếu Month 1 là “Bootcamp lính”,
+thì Month 2 là “Học viện sĩ quan”.
+
+---
+
