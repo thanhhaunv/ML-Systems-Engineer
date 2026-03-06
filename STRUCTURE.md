@@ -80,70 +80,346 @@ Repository phải **rõ ràng, không rối**.
 
 ---
 
-# 🚀 FULL REPOSITORY STRUCTURE
 
-AI-DRIVEN ML PLATFORM (9 MONTHS)
 
-```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# 🧠 FULL REPOSITORY STRUCTURE
+
+`ai-ml-platform-bootcamp`
+
+```text
 ai-ml-platform-bootcamp/
 │
 ├── README.md
 ├── ROADMAP.md
 ├── BOOTCAMP_RULES.md
 ├── SYSTEM_ARCHITECTURE.md
+├── DEVELOPMENT_WORKFLOW.md
+├── TECH_STACK.md
+├── SECURITY_GUIDELINES.md
 │
 ├── docs/
-│   ├── architecture
-│   ├── decisions
-│   ├── diagrams
-│   └── postmortems
+│   │
+│   ├── architecture/
+│   │   ├── ml-platform-overview.md
+│   │   ├── event-driven-architecture.md
+│   │   ├── data-flow.md
+│   │   └── component-breakdown.md
+│   │
+│   ├── diagrams/
+│   │   ├── phase1-architecture.mmd
+│   │   ├── phase2-architecture.mmd
+│   │   ├── phase3-architecture.mmd
+│   │   ├── kafka-stream-flow.mmd
+│   │   ├── ml-training-pipeline.mmd
+│   │   └── ai-agent-architecture.mmd
+│   │
+│   ├── decisions/
+│   │   ├── ADR-001-docker-first.md
+│   │   ├── ADR-002-event-driven-design.md
+│   │   ├── ADR-003-kafka-over-rabbitmq.md
+│   │   ├── ADR-004-clickhouse-for-analytics.md
+│   │   └── ADR-005-mlflow-model-registry.md
+│   │
+│   ├── postmortems/
+│   │   ├── incident-template.md
+│   │   ├── kafka-overload-simulation.md
+│   │   └── model-drift-case-study.md
+│   │
+│   └── runbooks/
+│       ├── service-deployment.md
+│       ├── kafka-recovery.md
+│       ├── database-backup.md
+│       └── model-rollback.md
 │
 ├── bootcamp/
+│   │
 │   ├── README.md
 │   │
 │   ├── month1-production-infra/
 │   │   ├── README.md
 │   │   ├── ROADMAP.md
-│   │   ├── SPRINT1.md
-│   │   ├── SPRINT2.md
+│   │   ├── SPRINT1-production-server.md
+│   │   ├── SPRINT2-backend-core.md
+│   │   │
 │   │   ├── theory/
+│   │   │   ├── linux-production-basics.md
+│   │   │   ├── ssh-security.md
+│   │   │   ├── docker-architecture.md
+│   │   │   ├── reverse-proxy-nginx.md
+│   │   │   ├── tls-https-fundamentals.md
+│   │   │   └── postgres-architecture.md
+│   │   │
 │   │   ├── labs/
+│   │   │   ├── lab01-linux-server-setup.md
+│   │   │   ├── lab02-ssh-hardening.md
+│   │   │   ├── lab03-docker-installation.md
+│   │   │   ├── lab04-nginx-reverse-proxy.md
+│   │   │   ├── lab05-https-certbot.md
+│   │   │   ├── lab06-fastapi-container.md
+│   │   │   └── lab07-postgres-schema.md
+│   │   │
 │   │   └── projects/
+│   │       └── ad-impression-api.md
+│   │
 │   ├── month2-data-ingestion/
+│   │   ├── README.md
+│   │   ├── kafka-basics.md
+│   │   ├── event-schema-design.md
+│   │   └── ingestion-pipeline-labs.md
+│   │
 │   ├── month3-stream-processing/
-│   ├── month4-feature-store/
+│   │   ├── README.md
+│   │   ├── stream-processing-theory.md
+│   │   ├── kafka-consumers.md
+│   │   └── clickhouse-ingestion.md
+│   │
+│   ├── month4-observability/
+│   │   ├── README.md
+│   │   ├── prometheus-metrics.md
+│   │   ├── grafana-dashboards.md
+│   │   └── loki-logging.md
+│   │
 │   ├── month5-ml-training/
+│   │   ├── README.md
+│   │   ├── feature-engineering.md
+│   │   ├── ml-training-pipeline.md
+│   │   └── experiment-tracking.md
+│   │
 │   ├── month6-mlops-platform/
+│   │   ├── README.md
+│   │   ├── mlflow-server.md
+│   │   ├── model-registry.md
+│   │   └── automated-training.md
+│   │
 │   ├── month7-multi-model-serving/
+│   │   ├── README.md
+│   │   ├── ab-testing.md
+│   │   └── traffic-routing.md
+│   │
 │   ├── month8-ai-agent-layer/
+│   │   ├── README.md
+│   │   ├── agent-architecture.md
+│   │   ├── drift-detection-agent.md
+│   │   ├── retrain-agent.md
+│   │   └── cost-optimizer-agent.md
+│   │
 │   └── month9-senior-hardening/
+│       ├── README.md
+│       ├── architecture-refactor.md
+│       ├── system-design.md
+│       └── portfolio-preparation.md
 │
 ├── platform/
-│
+│   │
 │   ├── infra/
+│   │   ├── dockerfiles/
+│   │   │   ├── fastapi.Dockerfile
+│   │   │   ├── kafka.Dockerfile
+│   │   │   └── airflow.Dockerfile
+│   │   │
+│   │   └── terraform/
+│   │       └── infrastructure.tf
+│   │
 │   ├── gateway/
+│   │   ├── nginx.conf
+│   │   └── routing.conf
+│   │
 │   ├── backend/
+│   │   ├── app/
+│   │   │   ├── main.py
+│   │   │   ├── api/
+│   │   │   ├── services/
+│   │   │   ├── models/
+│   │   │   └── config/
+│   │   │
+│   │   └── requirements.txt
+│   │
 │   ├── streaming/
+│   │   ├── producers/
+│   │   ├── consumers/
+│   │   └── schemas/
+│   │
 │   ├── ml-services/
+│   │   ├── training/
+│   │   ├── feature-store/
+│   │   └── serving/
+│   │
 │   ├── agents/
+│   │   ├── drift-agent/
+│   │   ├── retrain-agent/
+│   │   ├── deployment-agent/
+│   │   └── cost-agent/
+│   │
 │   └── observability/
+│       ├── prometheus.yml
+│       ├── grafana-dashboards.json
+│       └── loki-config.yml
 │
 ├── experiments/
-│
-│   ├── notebooks
-│   └── prototypes
+│   ├── notebooks/
+│   │   ├── feature-engineering.ipynb
+│   │   └── model-evaluation.ipynb
+│   │
+│   └── prototypes/
+│       ├── drift-detection-prototype.py
+│       └── recommender-experiment.py
 │
 ├── tools/
-│
-│   ├── load-testing
-│   ├── scripts
-│   └── benchmarking
+│   ├── load-testing/
+│   │   └── locustfile.py
+│   │
+│   ├── benchmarking/
+│   │   └── kafka-throughput-test.py
+│   │
+│   └── scripts/
+│       ├── deploy.sh
+│       ├── backup-db.sh
+│       └── cleanup-logs.sh
 │
 └── deployments/
-    ├── docker
-    ├── compose
-    └── k8s
+    ├── docker/
+    │   ├── docker-compose-core.yml
+    │   └── docker-compose-observability.yml
+    │
+    ├── compose/
+    │   └── ml-platform-stack.yml
+    │
+    └── k8s/
+        ├── api-deployment.yaml
+        ├── kafka-cluster.yaml
+        └── airflow-deployment.yaml
 ```
+
+---
+
+# 📊 FILE FUNCTION TABLE
+
+## Root Files
+
+| File                    | Purpose                                                      |
+| ----------------------- | ------------------------------------------------------------ |
+| README.md               | Giới thiệu project, mục tiêu bootcamp, kiến trúc ML platform |
+| ROADMAP.md              | Lộ trình học 9 tháng                                         |
+| BOOTCAMP_RULES.md       | Quy tắc kỷ luật bootcamp                                     |
+| SYSTEM_ARCHITECTURE.md  | Mô tả kiến trúc toàn hệ thống                                |
+| DEVELOPMENT_WORKFLOW.md | Quy trình dev, commit, deploy                                |
+| TECH_STACK.md           | Danh sách toàn bộ công nghệ                                  |
+| SECURITY_GUIDELINES.md  | Hướng dẫn bảo mật server và platform                         |
+
+---
+
+## Docs
+
+| Folder            | Purpose                                |
+| ----------------- | -------------------------------------- |
+| docs/architecture | mô tả chi tiết các thành phần hệ thống |
+| docs/diagrams     | sơ đồ Mermaid của hệ thống             |
+| docs/decisions    | Architecture Decision Records          |
+| docs/postmortems  | phân tích sự cố                        |
+| docs/runbooks     | hướng dẫn vận hành hệ thống            |
+
+---
+
+## Bootcamp Curriculum
+
+| Folder          | Purpose             |
+| --------------- | ------------------- |
+| bootcamp/month1 | infrastructure      |
+| bootcamp/month2 | data ingestion      |
+| bootcamp/month3 | streaming           |
+| bootcamp/month4 | observability       |
+| bootcamp/month5 | ML training         |
+| bootcamp/month6 | ML Ops              |
+| bootcamp/month7 | multi model serving |
+| bootcamp/month8 | AI agent layer      |
+| bootcamp/month9 | senior engineering  |
+
+---
+
+## Platform Code
+
+| Folder                 | Purpose                 |
+| ---------------------- | ----------------------- |
+| platform/infra         | Dockerfiles + infra     |
+| platform/gateway       | nginx gateway           |
+| platform/backend       | FastAPI backend         |
+| platform/streaming     | Kafka producer/consumer |
+| platform/ml-services   | ML pipeline             |
+| platform/agents        | AI automation agents    |
+| platform/observability | monitoring stack        |
+
+---
+
+## Experiments
+
+| Folder                 | Purpose           |
+| ---------------------- | ----------------- |
+| experiments/notebooks  | exploratory ML    |
+| experiments/prototypes | prototype systems |
+
+---
+
+## Tools
+
+| Folder             | Purpose            |
+| ------------------ | ------------------ |
+| tools/load-testing | API load testing   |
+| tools/scripts      | automation scripts |
+| tools/benchmarking | performance tests  |
+
+---
+
+## Deployments
+
+| Folder              | Purpose              |
+| ------------------- | -------------------- |
+| deployments/docker  | docker compose stack |
+| deployments/compose | full platform stack  |
+| deployments/k8s     | Kubernetes manifests |
+
+---
+
+# 🧠 Vì sao kiến trúc repo này rất mạnh
+
+Nó mô phỏng **repo của production ML platform**:
+
+* curriculum
+* system architecture
+* platform code
+* experiments
+* operations
+* deployment
+
+Một recruiter nhìn repo này sẽ thấy:
+
+> "Người này không chỉ biết ML, mà còn hiểu platform engineering."
+
+
+
+
+
+
+
+
+
+
+
+
 
 ---
 
