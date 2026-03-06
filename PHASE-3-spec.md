@@ -1,707 +1,1038 @@
-Month 7 là bước chuyển từ “1 model production”
-→ “Model marketplace nội bộ”.
+Dưới đây là **FULL AI-DRIVEN ML PLATFORM ARCHITECTURE (sau PHASE 3)**.
+Lúc này hệ thống không chỉ **train + serve model** nữa, mà có thêm **AI Agents quan sát và tự vận hành platform**.
+
+Kiến trúc có 4 tầng lớn:
+
+1. **User & API Layer**
+2. **Data & Streaming Layer**
+3. **ML Lifecycle Layer**
+4. **AI Agent Control Layer**
+
+---
+
+# 🧠 FULL AI-DRIVEN ML PLATFORM ARCHITECTURE
+
+```mermaid
+flowchart TB
+
+%% =====================
+%% USER LAYER
+%% =====================
+
+subgraph Internet
+User[Client / Web / Mobile / Ad SDK]
+end
+
+subgraph Edge
+Ingress[NGINX Ingress]
+end
+
+subgraph API_Layer
+API[FastAPI Backend]
+Auth[Auth + Rate Limit]
+PredictAPI[Prediction Gateway]
+end
+
+User --> Ingress
+Ingress --> API
+API --> Auth
+Auth --> PredictAPI
+
+%% =====================
+%% STREAMING
+%% =====================
+
+subgraph Streaming
+Kafka[(Kafka Event Bus)]
+end
+
+API --> Kafka
+
+%% =====================
+%% DATA LAYER
+%% =====================
+
+subgraph DataLayer
+Postgres[(PostgreSQL OLTP)]
+ClickHouse[(ClickHouse Analytics)]
+FeatureStore[(Feature Store)]
+end
+
+Kafka --> Postgres
+Kafka --> ClickHouse
+ClickHouse --> FeatureStore
+
+%% =====================
+%% ORCHESTRATION
+%% =====================
+
+subgraph Orchestration
+Airflow[Airflow Scheduler]
+Workers[Airflow Workers]
+end
+
+Airflow --> Workers
+
+%% =====================
+%% ML LIFECYCLE
+%% =====================
+
+subgraph ML_Platform
+Training[Training Pipeline]
+MLFlow[(MLFlow Tracking)]
+Registry[Model Registry]
+end
+
+FeatureStore --> Training
+Training --> MLFlow
+MLFlow --> Registry
+
+%% =====================
+%% MODEL SERVING
+%% =====================
+
+subgraph ModelServing
+Router[Model Router]
+ModelV1[Model v1 Container]
+ModelV2[Model v2 Container]
+end
+
+PredictAPI --> Router
+Router --> ModelV1
+Router --> ModelV2
+
+Registry --> Router
+
+%% =====================
+%% OBSERVABILITY
+%% =====================
+
+subgraph Observability
+Prometheus[(Prometheus Metrics)]
+Grafana[(Grafana Dashboard)]
+Loki[(Loki Logs)]
+end
+
+API --> Prometheus
+Router --> Prometheus
+ModelV1 --> Prometheus
+ModelV2 --> Prometheus
+
+API --> Loki
+Router --> Loki
+ModelV1 --> Loki
+ModelV2 --> Loki
+
+Prometheus --> Grafana
+Loki --> Grafana
+
+%% =====================
+%% AI AGENT LAYER
+%% =====================
+
+subgraph AI_Agents
+
+DriftAgent[Drift Detection Agent]
+RetrainAgent[Auto Retrain Agent]
+DeployAgent[Deployment Decision Agent]
+CostAgent[Cost Optimization Agent]
+ReportAgent[Report Generator Agent]
+
+end
+
+Prometheus --> DriftAgent
+ClickHouse --> DriftAgent
+
+DriftAgent --> RetrainAgent
+
+RetrainAgent --> Airflow
+
+MLFlow --> DeployAgent
+DeployAgent --> Router
+
+Prometheus --> CostAgent
+CostAgent --> Airflow
+
+Prometheus --> ReportAgent
+ReportAgent --> Grafana
+```
+
+---
+
+# 🧠 Kiến trúc logic của **AI Agent Layer**
+
+AI Agents đóng vai trò như **SRE + ML Engineer tự động**.
+
+```mermaid
+flowchart LR
+
+Metrics[Prometheus Metrics]
+Logs[Loki Logs]
+Data[ClickHouse Data]
+
+Metrics --> DriftAgent
+Data --> DriftAgent
+
+DriftAgent --> RetrainAgent
+
+RetrainAgent --> TrainingPipeline
+
+TrainingPipeline --> MLFlow
+
+MLFlow --> DeployAgent
+
+DeployAgent --> ModelRouter
+
+Metrics --> CostAgent
+
+CostAgent --> InfraOptimizer
+
+Metrics --> ReportAgent
+ReportAgent --> Dashboard
+```
+
+---
+
+# 🤖 Agent Responsibilities
+
+| Agent                 | Vai trò              |
+| --------------------- | -------------------- |
+| Drift Detection Agent | phát hiện data drift |
+| Auto Retrain Agent    | trigger training     |
+| Deployment Agent      | promote model        |
+| Cost Agent            | tối ưu CPU/RAM       |
+| Report Agent          | tạo report system    |
+
+---
+
+# 🔄 Autonomous ML Lifecycle
+
+Chu trình AI tự vận hành:
+
+```mermaid
+sequenceDiagram
+
+participant Metrics
+participant DriftAgent
+participant RetrainAgent
+participant Airflow
+participant Training
+participant MLFlow
+participant DeployAgent
+participant Router
+
+Metrics->>DriftAgent: drift detected
+
+DriftAgent->>RetrainAgent: trigger retrain
+
+RetrainAgent->>Airflow: start DAG
+
+Airflow->>Training: run training
+
+Training->>MLFlow: log experiment
+
+MLFlow->>DeployAgent: model candidate
+
+DeployAgent->>Router: promote model
+```
+
+---
+
+# ☸ Kubernetes Deployment Layout
+
+Sau PHASE 3 toàn bộ platform chạy trên **k3s cluster**.
+
+```mermaid
+flowchart TB
+
+subgraph Kubernetes Cluster
+
+subgraph Edge
+Ingress
+end
+
+subgraph API
+FastAPI1
+FastAPI2
+end
+
+subgraph Streaming
+Kafka
+end
+
+subgraph Data
+Postgres
+ClickHouse
+FeatureStore
+end
+
+subgraph ML
+MLFlow
+ModelRouter
+ModelV1
+ModelV2
+end
+
+subgraph Orchestration
+Airflow
+end
+
+subgraph Agents
+DriftAgent
+RetrainAgent
+DeployAgent
+CostAgent
+ReportAgent
+end
+
+subgraph Observability
+Prometheus
+Grafana
+Loki
+end
+
+end
+
+Ingress --> FastAPI1
+Ingress --> FastAPI2
+
+FastAPI1 --> Kafka
+FastAPI2 --> Kafka
+
+Kafka --> ClickHouse
+Kafka --> Postgres
+
+ClickHouse --> FeatureStore
+
+FeatureStore --> Airflow
+
+Airflow --> MLFlow
+
+MLFlow --> ModelRouter
+
+ModelRouter --> ModelV1
+ModelRouter --> ModelV2
+
+Prometheus --> DriftAgent
+Prometheus --> CostAgent
+Prometheus --> ReportAgent
+```
+
+---
+
+# 🎯 Sau PHASE 3 bạn đã build được
+
+Một **AI-Driven ML Platform** có khả năng:
+
+```text
+Real-time data ingestion
+Streaming analytics
+Feature engineering
+Model training pipeline
+Experiment tracking
+Model registry
+Multi-model serving
+Traffic routing
+A/B testing
+Drift detection
+Auto retraining
+Auto deployment
+Cost optimization
+System observability
+AI agents controlling system
+```
+
+---
+
+# 🚀 Level kiến thức bạn đạt được
+
+Sau roadmap này bạn có thể làm:
+
+| Role                       | Level  |
+| -------------------------- | ------ |
+| ML Platform Engineer       | Senior |
+| MLOps Engineer             | Senior |
+| ML Systems Engineer        | Senior |
+| AI Infrastructure Engineer | Senior |
+
+---
+
+💡 Nếu bạn muốn, bước tiếp theo rất quan trọng là:
+
+**Thiết kế Example Project chạy trên toàn bộ platform này**
+(một hệ thống **AI Ads Prediction / Recommendation System**) — đúng kiểu project mà các công ty Big Tech dùng.
+
+---
+---
+
+Dưới đây là **Breakdown PHASE 3 (Month 7–9)** theo đúng triết lý của toàn roadmap:
+
+* **Lý thuyết → triển khai ngay vào platform**
+* **Học cái gì → gắn vào hệ thống đang chạy**
+* **3h/ngày**
+* **Mỗi tháng có demo production**
+
+PHASE 3 là giai đoạn chuyển từ:
+
+> **ML Platform Engineer → AI Systems Architect**
 
 ---
 
 # 🟦 PHASE 3 — ADVANCED + AI AGENT LAYER (Month 7–9)
 
-Mục tiêu phase này:
-
-> Build system that manages itself.
+> Xây hệ thống **AI vận hành AI**
 
 ---
 
 # 📆 MONTH 7 — Multi-Model Platform
 
-> Từ single-model serving → traffic-aware model ecosystem
+## 🎯 Mục tiêu tháng
 
----
-
-# ✅ Strategic Focus — Phân tích chi tiết
-
----
-
-## 1️⃣ Multiple Model Serving
-
-Không còn:
+ML Platform có khả năng:
 
 ```
-/predict → 1 model
+deploy nhiều model
+routing traffic
+so sánh model
+tự phát hiện model kém
 ```
 
-Mà phải có:
+Platform chuyển từ:
 
-* Model v1
-* Model v2
-* Model experimental
-* Model baseline
-* Possibly rule-based fallback
-
-Kiến trúc:
-
-```mermaid id="m7multi1"
-graph TD
-    User --> Router
-    Router --> Model_A
-    Router --> Model_B
-    Router --> Model_C
+```
+Single Model System
 ```
 
-Phải có:
+thành
 
-* Model registry integration
-* Dynamic model loading
-* Hot swap model
-* Version-based routing
+```
+Experiment-driven ML Platform
+```
 
 ---
 
-## 2️⃣ Traffic Routing
+# Tuần 1 — Multi-Model Serving
 
-Thiết kế Router layer:
+## 📚 Lý thuyết
 
-* Percentage split (80/20)
-* User-segment based routing
-* Random bucket routing
-* Sticky session routing
+### Model Serving Architecture
 
-Phải đảm bảo:
+Một hệ thống production **không bao giờ chỉ có 1 model**.
 
-* Deterministic routing
-* Reproducibility
-* Log routing decision
+Ví dụ:
 
-Không log routing → không phân tích được A/B.
+| Model       | Purpose      |
+| ----------- | ------------ |
+| model_v1    | baseline     |
+| model_v2    | experimental |
+| model_light | fallback     |
 
 ---
 
-## 3️⃣ A/B Testing Infrastructure
+### Serving Pattern
 
-Không phải chỉ split traffic.
-
-Phải có:
-
-* Experiment ID
-* Control vs Treatment
-* Metrics comparison
-* Statistical threshold
-* Auto winner selection (optional)
-
-Flow:
-
-```mermaid id="m7ab2"
-graph TD
-    Traffic --> Router
-    Router --> Control_Model
-    Router --> Treatment_Model
-
-    Control_Model --> Metrics
-    Treatment_Model --> Metrics
+```
+Client
+   ↓
+Prediction Gateway
+   ↓
+Model Router
+   ↓
+Model Container
 ```
 
-Phải log:
+---
 
-* Prediction
-* Latency
-* Outcome (nếu có label)
-* Experiment group
+### 🛠 Thực hành
+
+Refactor **Model Serving API**.
+
+Triển khai:
+
+```
+model-service
+ ├── model_v1
+ ├── model_v2
+ └── router
+```
+
+Routing logic:
+
+```
+/predict?model=v1
+/predict?model=v2
+```
 
 ---
 
-## 4️⃣ Drift Detection Logic
+### 🎯 Kết quả tuần 1
 
-Ít nhất phải có:
+Model API có thể:
 
-* Feature distribution comparison
-* Mean/variance drift
-* KL divergence (basic)
-* Prediction distribution shift
+```
+serve multiple models
+switch model instantly
+```
+
+---
+
+# Tuần 2 — Traffic Routing
+
+## 📚 Lý thuyết
+
+### Traffic Control
+
+Production ML cần:
+
+```
+10% traffic → model B
+90% traffic → model A
+```
+
+để test model mới.
+
+---
+
+### Routing Strategy
+
+| Strategy      | Description |
+| ------------- | ----------- |
+| random        | simple A/B  |
+| user-hash     | consistent  |
+| feature-based | advanced    |
+
+---
+
+### 🛠 Thực hành
+
+Viết **Model Router**
+
+Ví dụ:
+
+```
+hash(user_id) % 100
+```
+
+```
+<10 → model_v2
+>=10 → model_v1
+```
+
+---
+
+### 🎯 Kết quả
+
+Bạn có:
+
+```
+A/B testing infrastructure
+```
+
+---
+
+# Tuần 3 — Drift Detection
+
+## 📚 Lý thuyết
+
+### Model Drift
+
+Có 3 loại drift:
+
+| Drift         | Meaning               |
+| ------------- | --------------------- |
+| Data drift    | dữ liệu thay đổi      |
+| Feature drift | distribution thay đổi |
+| Concept drift | relation thay đổi     |
+
+---
+
+### Detection Strategy
+
+Phổ biến:
+
+```
+KS Test
+Population Stability Index
+Distribution monitoring
+```
+
+---
+
+### 🛠 Thực hành
+
+Pipeline:
+
+```
+ClickHouse data
+ ↓
+Feature stats
+ ↓
+Drift metrics
+ ↓
+Prometheus metrics
+```
+
+---
+
+### 🎯 Kết quả
+
+Dashboard hiển thị:
+
+```
+feature distribution
+model accuracy
+drift score
+```
+
+---
+
+# Tuần 4 — Experiment Comparison
+
+## 📚 Lý thuyết
+
+ML platform cần:
+
+```
+compare models automatically
+```
+
+Metric ví dụ:
+
+```
+CTR prediction accuracy
+AUC
+Latency
+Error rate
+```
+
+---
+
+### 🛠 Thực hành
+
+Viết service:
+
+```
+experiment-evaluator
+```
+
+Chức năng:
+
+```
+pull metrics
+compare models
+recommend winner
+```
+
+---
+
+### 🎯 Mini Project Month 7
+
+Xây:
+
+```
+Experiment-capable ML Platform
+```
 
 Có thể:
 
-* Batch daily drift check
-* Trigger retraining
-
-Không drift detection → model chết âm thầm.
-
----
-
-## 5️⃣ Experiment Comparison Automation
-
-Airflow DAG hoặc service riêng:
-
-* Compare experiment metrics
-* Rank models
-* Generate report
-* Suggest promotion
-
-Đây là bước gần với AI self-governance.
-
----
-
-# 🧠 Architectural Principle — ĐÚNG HƯỚNG
-
-> Model is replaceable
-> Traffic is controllable
-> Performance is measurable
-
-Mình bổ sung:
-
-* No model is sacred
-* Routing is part of ML
-* Experimentation is continuous
-
----
-
-# 🏗 System Architecture After Month 7
-
-```mermaid id="m7arch3"
-graph TD
-    User --> Ingress
-    Ingress --> Router
-
-    Router --> Model_v1
-    Router --> Model_v2
-    Router --> Model_exp
-
-    Model_v1 --> Metrics
-    Model_v2 --> Metrics
-    Model_exp --> Metrics
-
-    Metrics --> Prometheus
-    Logs --> Loki
-    Drift_Check --> Airflow
 ```
-
-Giờ bạn có:
-
-* Multi-model serving
-* Traffic split
-* Drift detection
-* Automated experiment evaluation
-
----
-
-# 📦 Deliverables End of Month 7
-
-* Router layer implemented
-* 3 models running simultaneously
-* A/B testing infra
-* Drift detection script
-* Experiment report automation
-* Documentation
-
----
-
-# 🎯 Outcome
-
-Sau Month 7 bạn có:
-
-✔ Multi-model platform
-✔ Experiment-ready infra
-✔ Traffic control
-✔ Drift monitoring
-✔ Auto comparison
-
-Bạn đã build:
-
-Mini Google ML Platform.
-
----
-
-Month 8 sẽ là:
-
-* Online Feature Store
-* Real-time feature sync
-* Low-latency inference optimization
-* Caching strategy
-* Vector DB integration (chuẩn bị AI Agent layer)
-
-Month 9 sẽ là:
-
-* AI Agent control layer
-* Meta-controller agent
-* Policy-based deployment
-* Self-healing logic
-
----
----
----
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Month 8 là lúc bạn chính thức bước vào:
-
-> **System that manages itself.**
-
-Không còn chỉ automation bằng DAG,
-mà là **Agent-based decision system**.
-
----
-
-# 📆 MONTH 8 — AI Agent Orchestration Layer
-
-> Automation → Autonomy
-
----
-
-# 🎯 Mục tiêu tháng
-
-Xây một tầng meta-control phía trên ML platform:
-
-* Agent quan sát metrics
-* Agent ra quyết định
-* Agent kích hoạt workflow
-* Human chỉ duyệt khi rủi ro cao
-
-Bạn đang xây một **AI SRE + AI ML-Ops layer**.
-
----
-
-# 🧠 Strategic Focus — Phân tích sâu từng Agent
-
----
-
-## 1️⃣ Drift Detection Agent
-
-### Nhiệm vụ
-
-* Query feature distribution
-* So sánh với baseline
-* Tính drift score
-* Gửi cảnh báo hoặc trigger retrain
-
-### Input
-
-* Prometheus metrics
-* Feature stats từ ClickHouse
-* Prediction logs
-
-### Output
-
-* Drift event
-* Severity level
-* Suggested action
-
----
-
-## 2️⃣ Auto Retrain Agent
-
-Không chỉ dựa vào schedule.
-
-### Trigger khi:
-
-* Drift vượt threshold
-* Performance drop
-* Cost efficiency thay đổi
-* Canary thất bại
-
-### Agent sẽ:
-
-* Gửi task vào queue
-* Kích hoạt Airflow retraining DAG
-* Theo dõi kết quả
-* Đánh giá model mới
-
----
-
-## 3️⃣ Cost Analyzer Agent
-
-Đây là điểm rất mạnh.
-
-### Theo dõi:
-
-* Cost per prediction
-* Infra cost growth
-* CPU waste
-* Overprovisioning
-
-### Có thể đề xuất:
-
-* Scale down
-* Batch inference
-* Quantization
-* Change instance type
-
-Bạn đang build AI FinOps layer.
-
----
-
-## 4️⃣ Deployment Decision Agent
-
-Agent này đóng vai ML Platform Architect.
-
-### Nó sẽ:
-
-* So sánh experiment metrics
-* Kiểm tra drift
-* Kiểm tra latency
-* Kiểm tra cost impact
-* Đưa ra quyết định:
-
-  * Promote
-  * Canary
-  * Reject
-  * Rollback
-
-Human chỉ duyệt nếu:
-
-* Risk level = high
-* Production impact > threshold
-
----
-
-## 5️⃣ Report Generator Agent
-
-Agent này:
-
-* Tạo weekly ML health report
-* Tóm tắt experiment
-* Phân tích drift
-* Phân tích cost
-* Xuất markdown hoặc PDF
-
-Đây là AI làm việc thay bạn.
-
----
-
-# 🏗 Agent Interaction Architecture
-
-```mermaid id="m8agent1"
-graph TD
-    Prometheus --> DriftAgent
-    ClickHouse --> DriftAgent
-    DriftAgent --> TaskQueue
-
-    TaskQueue --> RetrainAgent
-    RetrainAgent --> Airflow
-
-    Metrics --> CostAgent
-    CostAgent --> DeploymentAgent
-
-    DeploymentAgent --> Router
-    DeploymentAgent --> ModelRegistry
-
-    AllAgents --> ReportAgent
+deploy 2 models
+split traffic
+compare performance
 ```
 
 ---
 
-# 🧩 Internal Communication
+# 📆 MONTH 8 — AI Agent Orchestration
 
-Bạn phải có:
-
-* Internal API (FastAPI)
-* Message Queue (Redis / Kafka topic riêng)
-* Agent state store
-* Decision log database
+Đây là phần **khác biệt nhất** của roadmap.
 
 ---
 
-# 🔐 Governance Layer
+# Tuần 1 — Agent Architecture
 
-Mỗi action phải có:
+## 📚 Lý thuyết
 
-* Reason
-* Confidence score
-* Impact estimation
-* Rollback plan
+Agent system gồm:
 
-Không có decision log → không audit được.
+```
+Observer
+Decision
+Action
+```
 
----
+Ví dụ:
 
-# 🧠 Architectural Principle — ĐÚNG HƯỚNG
-
-> Agents observe metrics
-> Agents trigger workflows
-> Human approves only high-risk actions
-
-Mình bổ sung:
-
-* Every agent decision must be explainable
-* No silent automation
-* Autonomy with boundaries
+```
+metrics → agent → decision → trigger pipeline
+```
 
 ---
 
-# 📦 Deliverables End of Month 8
+### Agent Communication
 
-* 5 running agents
-* Internal API
-* Task queue integration
-* Decision log store
-* Human approval interface (basic)
-* Weekly auto report
+Agents giao tiếp qua:
 
----
-
-# 🎯 Outcome
-
-Sau Month 8 bạn có:
-
-✔ AI giám sát ML system
-✔ AI trigger retrain
-✔ AI phân tích cost
-✔ AI đề xuất deploy
-✔ AI viết báo cáo
-
-Bạn đã build:
-
-Mini autonomous ML Ops platform.
+```
+internal API
+task queue
+event bus
+```
 
 ---
 
-Month 9 sẽ là bước cuối của Phase 3:
+### 🛠 Thực hành
 
-* Self-healing infra
-* Policy engine
-* Meta-controller agent
-* Risk scoring system
-* Autonomous rollback
-* Safety guardrail layer
+Xây **Agent Framework**
 
----
+Service:
 
+```
+agent-core
+```
 
+Modules:
 
-
-
-
-
-
-Đây là tháng “đóng dấu đẳng cấp”.
-
-Nếu Month 1–8 là xây hệ thống,
-thì Month 9 là:
-
-> Chứng minh bạn **thực sự hiểu hệ thống**.
-
-Đây là bước chuyển từ Builder → Senior.
+```
+observer
+decision
+executor
+```
 
 ---
 
-# 📆 MONTH 9 — Senior-Level Hardening & Portfolio
+# Tuần 2 — Drift Detection Agent
 
-> You don’t just build systems.
-> You defend them.
+## 📚 Lý thuyết
 
----
+Agent đọc:
 
-# 🎯 Strategic Focus — Phân tích từng phần
+```
+Prometheus metrics
+```
 
----
+Nếu:
 
-## 1️⃣ Full Architecture Refactor
+```
+drift_score > threshold
+```
 
-Sau 8 tháng, chắc chắn có:
-
-* Coupling thừa
-* Component dư thừa
-* Dockerfile chưa tối ưu
-* Naming chưa chuẩn
-* Monitoring chưa nhất quán
-
-Month 9 phải:
-
-* Review toàn bộ repo
-* Chuẩn hóa structure
-* Tách domain layer rõ ràng
-* Clean CI/CD
-* Remove technical debt
-* Update diagrams vFinal
-
-Đây là lần “architectural maturity pass”.
+→ trigger retraining.
 
 ---
 
-## 2️⃣ FAANG-Style Design Document
+### 🛠 Thực hành
 
-Bạn phải viết 1 tài liệu kiểu:
+Agent:
 
-* Problem statement
-* Constraints
-* Non-functional requirements
-* Traffic assumptions
-* Scaling strategy
-* Failure scenarios
-* Cost estimation
-* Trade-off analysis
-* Alternatives considered
+```
+drift-agent
+```
 
-Nếu không viết được document này → chưa phải senior.
+Workflow:
+
+```
+metrics
+ ↓
+detect drift
+ ↓
+call Airflow API
+```
 
 ---
 
-## 3️⃣ Postmortem Sample
+# Tuần 3 — Auto Retrain Agent
 
-Giả lập sự cố:
+## 📚 Lý thuyết
 
-* Model deploy sai
-* Drift không phát hiện
-* Kafka backlog
-* Cost spike
+Retraining pipeline:
+
+```
+collect data
+train model
+evaluate
+deploy candidate
+```
+
+---
+
+### 🛠 Thực hành
+
+Agent:
+
+```
+retrain-agent
+```
+
+Trigger:
+
+```
+Airflow DAG
+```
+
+---
+
+# Tuần 4 — Deployment Decision Agent
+
+## 📚 Lý thuyết
+
+Agent đọc:
+
+```
+experiment metrics
+```
+
+Nếu:
+
+```
+model_v2 better
+```
+
+→ promote model.
+
+---
+
+### 🛠 Thực hành
+
+Agent:
+
+```
+deploy-agent
+```
+
+Action:
+
+```
+update router
+```
+
+---
+
+### 🎯 Mini Project Month 8
+
+Bạn có hệ thống:
+
+```
+AI agents managing ML pipeline
+```
+
+Agents:
+
+```
+drift agent
+retrain agent
+deploy agent
+report agent
+```
+
+---
+
+# 📆 MONTH 9 — Senior Hardening & Portfolio
+
+Tháng này mục tiêu:
+
+```
+chuyển project → portfolio senior
+```
+
+---
+
+# Tuần 1 — Architecture Refactor
+
+## 📚 Lý thuyết
+
+System design principles:
+
+```
+separation of concern
+fault tolerance
+observability
+```
+
+---
+
+### 🛠 Thực hành
+
+Refactor:
+
+```
+services
+configs
+naming
+docker
+k8s
+```
+
+---
+
+# Tuần 2 — Documentation
+
+## 📚 Lý thuyết
+
+Engineer senior **được đánh giá qua documentation**.
 
 Viết:
 
-* Timeline
-* Impact
-* Root cause
-* What went wrong
-* What went well
-* Action items
-
-Đây là kỹ năng rất hiếm.
+```
+Architecture doc
+Runbook
+Deployment guide
+```
 
 ---
 
-## 4️⃣ Load Simulation Scenario
+### 🛠 Thực hành
 
-Tạo kịch bản:
+Repo structure:
 
-* 10x traffic
-* Region outage
-* DB slow response
-* High concurrency inference
-
-Viết báo cáo:
-
-* Bottleneck
-* Scaling behavior
-* Cost impact
-* Lessons learned
+```
+docs/
+architecture/
+runbooks/
+incident/
+```
 
 ---
 
-## 5️⃣ GitHub Clean-up
+# Tuần 3 — Failure Simulation
 
-Phải có:
+Test system:
 
-* README chuẩn
-* Architecture diagram
-* Setup guide
-* Folder clean
-* Commit history có ý nghĩa
-* No random file
-
-GitHub của bạn phải nhìn như production repo.
+```
+Kafka crash
+Model server crash
+DB slow
+```
 
 ---
 
-## 6️⃣ Production-Grade Documentation
+### 🛠 Thực hành
 
-Tối thiểu phải có:
+Viết:
 
-* System overview
-* Infra diagram
-* Data flow
-* ML lifecycle
-* Agent orchestration
-* Observability guide
-* Deployment guide
-* Incident handling
-* Scaling strategy
-* Cost model
-
-Documentation là bằng chứng.
+```
+incident reports
+postmortem
+```
 
 ---
 
-## 7️⃣ Mock System Design Practice
+# Tuần 4 — Portfolio & Interview
 
-Bạn phải tự trả lời được:
+Chuẩn bị:
 
-* Thiết kế hệ thống ads tracking 1B events/day
-* Thiết kế ML platform multi-model
-* Thiết kế A/B testing infra
-* Thiết kế drift detection system
-* Thiết kế autonomous retrain pipeline
-
-Và nói trôi chảy trong 45 phút.
-
----
-
-# 🧠 Architectural Principle — RẤT ĐÚNG
-
-> Engineer who can explain system wins
-> Documentation = proof of mastery
-
-Mình bổ sung:
-
-* Clarity > Complexity
-* Trade-offs define seniority
+```
+GitHub repo
+Architecture diagrams
+README
+Demo video
+```
 
 ---
 
-# 🏗 Final Architecture Snapshot
+### Practice system design:
 
-Sau Month 9 bạn có:
+Ví dụ câu hỏi:
 
-* Kafka ingestion
-* ClickHouse analytics
-* MLflow lifecycle
-* Airflow orchestration
-* Canary deployment
-* Drift detection
-* Agent-based governance
-* Kubernetes scaling
-* Observability stack
-* Cost-aware design
-* Self-healing logic
-
-Đây không còn là project.
-Đây là một ML Platform hoàn chỉnh.
+```
+Design ML recommendation system
+Design ad prediction system
+Design fraud detection pipeline
+```
 
 ---
 
-# 📦 Deliverables End of Month 9
+# 🎯 Final Platform (After 9 Months)
 
-* Clean GitHub repo
-* 1 FAANG-style design doc (~20–30 pages)
-* 1 Postmortem document
-* 1 Load test report
-* Updated architecture diagram vFinal
-* Portfolio-ready project
+Bạn sẽ có **AI-Driven ML Platform**.
 
----
-
-# 🎯 Outcome
-
-Sau Month 9 bạn là:
-
-✔ ML Platform Engineer
-✔ Production Systems Engineer
-✔ System Design capable
-✔ Autonomous ML infra builder
-✔ Portfolio strong enough for senior interviews
-
----
-
-# 🏁 KẾT THÚC PHASE 3
-
-Bạn đã đi từ:
-
-Month 1 → Single backend
-Month 9 → Autonomous ML platform with AI agents
+```
+Internet
+   │
+Ingress
+   │
+API
+   │
+Kafka
+   │
+ClickHouse / PostgreSQL
+   │
+Feature Store
+   │
+Airflow
+   │
+MLFlow
+   │
+Model Serving
+   │
+Experiment System
+   │
+AI Agents
+```
 
 ---
 
-Bây giờ theo đúng phương pháp bạn đặt ra ban đầu:
+# 📊 Final Skill Tree
 
-Ta đã hoàn thành cấp:
+Bạn sẽ master:
 
-✔ Phase
-✔ Month
+### Infrastructure
+
+```
+Docker
+Kubernetes
+Linux
+Networking
+```
+
+### Data Engineering
+
+```
+Kafka
+ClickHouse
+Streaming
+```
+
+### ML Ops
+
+```
+MLFlow
+Airflow
+Experiment platform
+```
+
+### Platform Engineering
+
+```
+Observability
+CI/CD
+Scaling
+```
+
+### AI Systems
+
+```
+Agent architecture
+Autonomous ML pipeline
+```
+
+---
+
+# 🚀 Kết quả thực tế sau roadmap này
+
+Bạn có thể apply các role:
+
+```
+ML Platform Engineer
+MLOps Engineer
+ML Systems Engineer
+AI Infrastructure Engineer
+```
+
+---
+
+Nếu bạn muốn, bước tiếp theo tôi có thể vẽ:
+
+## 🧠 **FULL AI-DRIVEN ML PLATFORM ARCHITECTURE (Phase 3)**
+
+Sơ đồ này là **level kiến trúc mà nhiều senior ML engineer còn chưa thiết kế được**.
