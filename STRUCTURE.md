@@ -99,8 +99,16 @@ ai-ml-platform-bootcamp/
 │   └── postmortems
 │
 ├── bootcamp/
-│
+│   ├── README.md
+│   │
 │   ├── month1-production-infra/
+│   │   ├── README.md
+│   │   ├── ROADMAP.md
+│   │   ├── SPRINT1.md
+│   │   ├── SPRINT2.md
+│   │   ├── theory/
+│   │   ├── labs/
+│   │   └── projects/
 │   ├── month2-data-ingestion/
 │   ├── month3-stream-processing/
 │   ├── month4-feature-store/
