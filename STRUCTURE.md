@@ -8,6 +8,277 @@ Rất hợp lý. Với mục tiêu **bootcamp quân đội + vừa chắc lý th
 Tôi sẽ thiết kế **repository cho toàn bộ 9 tháng**, nhưng **Month 1 sẽ là phần được dùng ngay**.
 
 ---
+---
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Dưới đây là **Repository Architecture Diagram** cho toàn bộ project `ai-ml-platform-bootcamp`.
+
+Sơ đồ này giúp nhìn **1 phát hiểu ngay repo này hoạt động như thế nào**:
+
+* Bootcamp tài liệu → hướng dẫn học
+* Platform code → hệ thống thực tế
+* Deployments → chạy production
+* Tools → test hệ thống
+* Experiments → nghiên cứu ML
+* Docs → kiến trúc & vận hành
+
+---
+
+# 🧠 Repository Architecture Diagram
+
+```mermaid
+flowchart TB
+
+subgraph Learning_Layer["Bootcamp Learning Layer"]
+BOOTCAMP[bootcamp/]
+M1[Month1 Production Infra]
+M2[Month2 Data Ingestion]
+M3[Month3 Streaming]
+M4[Month4 Observability]
+M5[Month5 ML Training]
+M6[Month6 MLOps Platform]
+M7[Month7 Multi Model]
+M8[Month8 AI Agents]
+M9[Month9 Senior Hardening]
+
+BOOTCAMP --> M1
+BOOTCAMP --> M2
+BOOTCAMP --> M3
+BOOTCAMP --> M4
+BOOTCAMP --> M5
+BOOTCAMP --> M6
+BOOTCAMP --> M7
+BOOTCAMP --> M8
+BOOTCAMP --> M9
+end
+
+
+subgraph Documentation["System Documentation"]
+DOCS[docs/]
+ARCH[architecture]
+DIAGRAMS[diagrams]
+DECISIONS[ADR decisions]
+RUNBOOKS[runbooks]
+POSTMORTEMS[postmortems]
+
+DOCS --> ARCH
+DOCS --> DIAGRAMS
+DOCS --> DECISIONS
+DOCS --> RUNBOOKS
+DOCS --> POSTMORTEMS
+end
+
+
+subgraph Platform["ML Platform Implementation"]
+PLATFORM[platform/]
+
+INFRA[infra]
+GATEWAY[gateway nginx]
+BACKEND[backend fastapi]
+STREAMING[kafka streaming]
+MLSERVICES[ml services]
+AGENTS[ai agents]
+OBSERVABILITY[prometheus grafana]
+
+PLATFORM --> INFRA
+PLATFORM --> GATEWAY
+PLATFORM --> BACKEND
+PLATFORM --> STREAMING
+PLATFORM --> MLSERVICES
+PLATFORM --> AGENTS
+PLATFORM --> OBSERVABILITY
+end
+
+
+subgraph Research["ML Experiments"]
+EXP[experiments/]
+
+NOTEBOOKS[jupyter notebooks]
+PROTOTYPES[ml prototypes]
+
+EXP --> NOTEBOOKS
+EXP --> PROTOTYPES
+end
+
+
+subgraph Operations["Engineering Tools"]
+TOOLS[tools/]
+
+LOADTEST[load testing]
+SCRIPTS[automation scripts]
+BENCH[benchmarking]
+
+TOOLS --> LOADTEST
+TOOLS --> SCRIPTS
+TOOLS --> BENCH
+end
+
+
+subgraph Deployment["Deployment Layer"]
+DEPLOY[deployments/]
+
+DOCKER[docker compose]
+STACK[ml platform stack]
+K8S[kubernetes manifests]
+
+DEPLOY --> DOCKER
+DEPLOY --> STACK
+DEPLOY --> K8S
+end
+
+
+BOOTCAMP --> PLATFORM
+PLATFORM --> DEPLOY
+PLATFORM --> TOOLS
+PLATFORM --> EXP
+DOCS --> PLATFORM
+DOCS --> DEPLOY
+```
+
+---
+
+# 📊 Ý nghĩa của từng Layer
+
+## 1️⃣ Bootcamp Layer
+
+Đây là **nội dung học**.
+
+Bạn học:
+
+```
+theory
+→ lab
+→ project
+→ production system
+```
+
+---
+
+## 2️⃣ Documentation Layer
+
+Dành cho **engineering thinking**
+
+Có:
+
+* Architecture docs
+* ADR (Architecture Decision Record)
+* Runbook
+* Postmortem
+
+=> Đây là thứ **Senior Engineer luôn viết**.
+
+---
+
+## 3️⃣ Platform Layer
+
+Đây là **core system bạn build**.
+
+```
+API
+Streaming
+ML pipeline
+Agents
+Monitoring
+```
+
+---
+
+## 4️⃣ Research Layer
+
+Nơi thử nghiệm:
+
+```
+feature engineering
+model experiments
+prototypes
+```
+
+---
+
+## 5️⃣ Tools Layer
+
+Engineering tools:
+
+```
+load testing
+benchmark
+automation
+```
+
+---
+
+## 6️⃣ Deployment Layer
+
+Chạy production:
+
+```
+Docker Compose
+Kubernetes
+```
+
+---
+
+# 🔥 Điều đặc biệt của repo này
+
+Repo này không phải:
+
+```
+machine-learning-project
+```
+
+mà là:
+
+```
+ML PLATFORM ENGINEERING REPOSITORY
+```
+
+Giống repo của:
+
+* Uber Michelangelo
+* Netflix ML Platform
+* Meta ML Infra
+
+---
+
+# 🚀 Nếu làm đúng repo này sau 9 tháng
+
+Bạn sẽ có portfolio:
+
+```
+AI ML Platform Engineer
+```
+
+không phải:
+
+```
+Junior Data Scientist
+```
+
+
+
+
+
+
+
+
+
+
+
+---
+---
 
 # 🧠 MASTER GUIDELINE (TOÀN KHÓA)
 
