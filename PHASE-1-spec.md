@@ -1,3 +1,332 @@
+Dưới đây là **kiến trúc đầy đủ của ML Platform – Phase 1** được vẽ theo **Mermaid**.
+Thiết kế này tuân theo các nguyên tắc bạn đã đặt ra:
+
+* **Single-node nhưng production style**
+* **Containerized toàn bộ**
+* **Event-driven architecture**
+* **Observability-first**
+* **ML lifecycle chuẩn ML Ops**
+
+Hệ thống này cũng rất phù hợp với **use-case ad impression tracking + ML prediction** mà công ty bạn đang quan tâm.
+
+---
+
+# 🧠 Tổng thể ML Platform – Phase 1
+
+```mermaid
+flowchart TB
+
+subgraph Internet
+User[Client / Browser]
+Ads[Ad SDK / Website]
+end
+
+subgraph Edge
+DNS[DNS]
+Nginx[Nginx Reverse Proxy]
+TLS[HTTPS TLS Termination]
+end
+
+subgraph API_Layer
+FastAPI[FastAPI Backend API]
+Auth[Auth / API Key]
+RateLimit[Rate Limit]
+end
+
+subgraph Streaming
+Kafka[(Kafka Broker)]
+Topic1[Topic: ad_events]
+Topic2[Topic: feature_events]
+end
+
+subgraph Consumers
+Consumer1[Event Consumer]
+Consumer2[Feature Builder]
+end
+
+subgraph Storage_OLTP
+Postgres[(PostgreSQL)]
+AdEventTable[Table: ad_event]
+end
+
+subgraph Storage_Analytics
+ClickHouse[(ClickHouse)]
+FactEvents[Table: fact_ad_events]
+AggViews[Materialized Views]
+end
+
+subgraph ML_Platform
+Training[Training Pipeline]
+MLFlow[(MLFlow Tracking)]
+Registry[Model Registry]
+end
+
+subgraph ModelServing
+ModelAPI[Model Serving API]
+end
+
+subgraph Observability
+Prometheus[(Prometheus)]
+Grafana[(Grafana)]
+Logs[Structured Logs]
+end
+
+
+User --> DNS
+Ads --> DNS
+
+DNS --> Nginx
+Nginx --> TLS
+TLS --> FastAPI
+
+FastAPI --> Auth
+Auth --> RateLimit
+
+RateLimit --> Kafka
+Kafka --> Topic1
+Kafka --> Topic2
+
+Topic1 --> Consumer1
+Consumer1 --> Postgres
+Postgres --> AdEventTable
+
+Topic1 --> Consumer2
+Consumer2 --> ClickHouse
+
+ClickHouse --> FactEvents
+FactEvents --> AggViews
+
+FactEvents --> Training
+Training --> MLFlow
+MLFlow --> Registry
+
+Registry --> ModelAPI
+FastAPI --> ModelAPI
+
+FastAPI --> Logs
+Kafka --> Logs
+Consumer1 --> Logs
+Consumer2 --> Logs
+
+FastAPI --> Prometheus
+Kafka --> Prometheus
+Prometheus --> Grafana
+```
+
+---
+
+# 🧱 Kiến trúc Container (Docker Layer)
+
+Toàn bộ hệ thống chạy trong **Docker Compose single-node**.
+
+```mermaid
+flowchart TB
+
+subgraph Docker_Host
+Nginx
+FastAPI
+Kafka
+Zookeeper
+Postgres
+ClickHouse
+MLFlow
+ModelAPI
+Prometheus
+Grafana
+end
+
+Nginx --> FastAPI
+FastAPI --> Kafka
+Kafka --> Postgres
+Kafka --> ClickHouse
+
+ClickHouse --> MLFlow
+MLFlow --> ModelAPI
+
+FastAPI --> Prometheus
+Kafka --> Prometheus
+Prometheus --> Grafana
+```
+
+---
+
+# 🔄 Event Flow (Ad Impression)
+
+Đây là **luồng dữ liệu quan trọng nhất** của hệ thống.
+
+```mermaid
+sequenceDiagram
+
+participant Client
+participant API
+participant Kafka
+participant Consumer
+participant ClickHouse
+participant Postgres
+
+Client->>API: POST /ad/impression
+API->>Kafka: publish ad_event
+
+Kafka->>Consumer: consume event
+
+Consumer->>Postgres: insert raw event
+Consumer->>ClickHouse: insert analytics event
+```
+
+---
+
+# 🤖 ML Lifecycle Flow
+
+Đây là **phần ML Ops thực sự**.
+
+```mermaid
+flowchart LR
+
+ClickHouse[ClickHouse Analytics Data]
+
+ClickHouse --> FeatureEngineering[Feature Engineering]
+
+FeatureEngineering --> Training
+
+Training --> MLFlow
+
+MLFlow --> ModelRegistry
+
+ModelRegistry --> ModelAPI
+
+ModelAPI --> PredictionEndpoint
+```
+
+---
+
+# 📊 Observability Flow
+
+```mermaid
+flowchart LR
+
+FastAPI --> Metrics
+Kafka --> Metrics
+Consumers --> Metrics
+
+Metrics --> Prometheus
+Prometheus --> Grafana
+
+FastAPI --> Logs
+Kafka --> Logs
+Consumers --> Logs
+```
+
+---
+
+# 📦 Dữ liệu chính của hệ thống
+
+### Event Schema (Ad Event)
+
+```json
+{
+  "event_id": "uuid",
+  "user_id": "string",
+  "ad_id": "string",
+  "zone_id": "string",
+  "website_id": "string",
+  "timestamp": "datetime",
+  "device": "mobile|desktop",
+  "country": "VN",
+  "ip": "string"
+}
+```
+
+---
+
+# 🧩 Các Service chính
+
+| Service    | Vai trò             |
+| ---------- | ------------------- |
+| Nginx      | Reverse proxy + TLS |
+| FastAPI    | Backend API         |
+| Kafka      | Event streaming     |
+| PostgreSQL | OLTP storage        |
+| ClickHouse | Analytics storage   |
+| MLFlow     | Experiment tracking |
+| Model API  | Model serving       |
+| Prometheus | Metrics             |
+| Grafana    | Dashboard           |
+
+---
+
+# 🎯 Sau Phase 1 bạn sẽ có
+
+Một **ML Platform Mini giống production thật**:
+
+```
+Internet
+   │
+   ▼
+Nginx
+   │
+   ▼
+FastAPI API
+   │
+   ▼
+Kafka Event Bus
+   │
+   ├── PostgreSQL (raw events)
+   └── ClickHouse (analytics)
+            │
+            ▼
+        ML Training
+            │
+            ▼
+        MLFlow
+            │
+            ▼
+        Model Serving API
+```
+
+---
+
+# 🚀 Điều cực quan trọng tiếp theo
+
+Sau khi có **kiến trúc**, bước tiếp theo phải làm:
+
+```
+Architecture
+     ↓
+Repository Structure
+```
+
+tức là thiết kế:
+
+```
+ml-platform/
+    backend/
+    streaming/
+    analytics/
+    ml/
+    infra/
+```
+
+Nếu làm bước này tốt thì:
+
+* code **không bao giờ loạn**
+* AI Agent sau này **cũng quản lý được repo**
+* CI/CD **rất dễ viết**
+
+---
+
+Nếu bạn muốn, tôi sẽ làm tiếp **bước cực quan trọng tiếp theo**:
+
+> **Thiết kế toàn bộ repository structure của ML Platform (production-grade)**
+
+Cái này chính là thứ phân biệt:
+
+* **code project bình thường**
+* với **ML platform chuẩn công ty công nghệ**.
+
+---
+---
+
+
 Ta sẽ **breakdown PHASE 1 → cấp Sprint (2 tuần)** trước.
 Sau đó mới xuống **Week → Day → Hour**.
 
