@@ -1,415 +1,992 @@
-Rồi. Giờ ta bước vào **PHASE 2 — Production Engineering**.
-Month 4 là tháng “đập hệ thống cho nó vỡ… để nó không vỡ khi production”.
+Dưới đây là **FULL ML PLATFORM ARCHITECTURE sau PHASE 2**.
+Lúc này hệ thống đã chuyển từ **single-node docker → production platform chạy trên Kubernetes (k3s)**, có đầy đủ:
+
+* Ingress
+* API layer
+* Streaming
+* Feature Store
+* ML lifecycle
+* Observability
+* Automation
+
+Đây gần giống kiến trúc **ML Platform ở các công ty công nghệ thật** (simplified).
+
+---
+
+# 🧠 ML Platform Architecture — Phase 2
+
+```mermaid
+flowchart TB
+
+subgraph Internet
+Client[Client / Website / Ad SDK]
+end
+
+subgraph Edge
+Ingress[NGINX Ingress Controller]
+end
+
+subgraph API_Layer
+API[FastAPI Backend]
+Auth[Auth + Rate Limit]
+end
+
+subgraph Streaming
+Kafka[(Kafka Cluster)]
+Topics[Event Topics]
+end
+
+subgraph Data_Layer
+Postgres[(PostgreSQL OLTP)]
+ClickHouse[(ClickHouse Analytics)]
+FeatureStore[(Feature Store)]
+end
+
+subgraph Orchestration
+Airflow[Airflow Scheduler]
+Worker[Airflow Workers]
+end
+
+subgraph ML_Platform
+Training[Training Pipeline]
+MLFlow[(MLFlow Tracking)]
+Registry[Model Registry]
+end
+
+subgraph Serving
+ModelAPI[Model Serving API]
+end
+
+subgraph Observability
+Prometheus[(Prometheus)]
+Grafana[(Grafana)]
+Loki[(Loki Logs)]
+end
+
+Client --> Ingress
+Ingress --> API
+API --> Auth
+
+Auth --> Kafka
+Kafka --> Topics
+
+Topics --> Postgres
+Topics --> ClickHouse
+
+ClickHouse --> FeatureStore
+
+FeatureStore --> Training
+
+Training --> MLFlow
+MLFlow --> Registry
+
+Registry --> ModelAPI
+
+API --> ModelAPI
+
+Airflow --> Training
+Airflow --> FeatureStore
+Airflow --> MLFlow
+
+API --> Prometheus
+Kafka --> Prometheus
+ModelAPI --> Prometheus
+
+API --> Loki
+Kafka --> Loki
+ModelAPI --> Loki
+
+Prometheus --> Grafana
+Loki --> Grafana
+```
+
+---
+
+# ☸ Kubernetes Layer
+
+Sau Phase 2 toàn bộ hệ thống chạy trong **k3s cluster**.
+
+```mermaid
+flowchart TB
+
+subgraph Kubernetes_Cluster
+
+subgraph Ingress
+NGINX_Ingress
+end
+
+subgraph API
+FastAPI_Pod
+FastAPI_Pod2
+end
+
+subgraph Streaming
+Kafka_Broker
+Kafka_Broker2
+end
+
+subgraph Data
+Postgres
+ClickHouse
+FeatureStore
+end
+
+subgraph ML
+MLFlow
+ModelServer
+end
+
+subgraph Orchestration
+Airflow_Scheduler
+Airflow_Worker1
+Airflow_Worker2
+end
+
+subgraph Observability
+Prometheus
+Grafana
+Loki
+end
+
+end
+
+NGINX_Ingress --> FastAPI_Pod
+NGINX_Ingress --> FastAPI_Pod2
+
+FastAPI_Pod --> Kafka_Broker
+FastAPI_Pod2 --> Kafka_Broker
+
+Kafka_Broker --> ClickHouse
+Kafka_Broker --> Postgres
+
+ClickHouse --> FeatureStore
+
+FeatureStore --> Airflow_Worker1
+
+Airflow_Worker1 --> MLFlow
+
+MLFlow --> ModelServer
+
+FastAPI_Pod --> ModelServer
+
+Prometheus --> Grafana
+Loki --> Grafana
+```
+
+---
+
+# 🔄 End-to-End Data Flow
+
+Đây là **luồng dữ liệu hoàn chỉnh của platform**.
+
+```mermaid
+sequenceDiagram
+
+participant Client
+participant API
+participant Kafka
+participant ClickHouse
+participant Feature
+participant Airflow
+participant Train
+participant MLFlow
+participant Model
+participant Predict
+
+Client->>API: POST event
+API->>Kafka: publish event
+
+Kafka->>ClickHouse: store analytics
+
+ClickHouse->>Feature: build features
+
+Airflow->>Train: start training
+
+Train->>MLFlow: log experiment
+
+MLFlow->>Model: register model
+
+Model->>Predict: deploy
+
+Client->>API: prediction request
+
+API->>Predict: inference
+```
+
+---
+
+# 🧩 Platform Components (Phase 2)
+
+| Layer               | Technology       |
+| ------------------- | ---------------- |
+| Ingress             | NGINX Ingress    |
+| API                 | FastAPI          |
+| Streaming           | Kafka            |
+| OLTP                | PostgreSQL       |
+| Analytics           | ClickHouse       |
+| Feature Store       | Feature Table    |
+| Orchestration       | Airflow          |
+| Experiment Tracking | MLFlow           |
+| Model Serving       | FastAPI / Bento  |
+| Metrics             | Prometheus       |
+| Dashboard           | Grafana          |
+| Logs                | Loki             |
+| Orchestration       | Kubernetes (k3s) |
+
+---
+
+# 📊 Kiến trúc Logical
+
+```
+                Internet
+                    │
+                    ▼
+               Ingress
+                    │
+                    ▼
+                  API
+                    │
+                    ▼
+                 Kafka
+            ┌───────────────┐
+            │               │
+            ▼               ▼
+        PostgreSQL     ClickHouse
+                            │
+                            ▼
+                       Feature Store
+                            │
+                            ▼
+                         Airflow
+                            │
+                            ▼
+                         Training
+                            │
+                            ▼
+                          MLFlow
+                            │
+                            ▼
+                        Model API
+                            │
+                            ▼
+                         Prediction
+```
+
+---
+
+# 🎯 Sau PHASE 2 bạn có gì
+
+Bạn đã build được **một ML platform production-like** gồm:
+
+```
+Event streaming
+Feature engineering
+Training pipeline
+Experiment tracking
+Model registry
+Model serving
+Observability
+Automation
+Kubernetes deployment
+```
+
+Level này tương đương:
+
+```
+Mid → Senior ML Engineer
+ML Platform Engineer
+MLOps Engineer
+```
+
+---
+
+# 🚀 Bước tiếp theo cực quan trọng (PHASE 3)
+
+Phase 3 mới là phần **điên rồ nhất** của roadmap.
+
+Bạn sẽ build:
+
+```
+AI Agents quản lý ML Platform
+```
+
+Ví dụ:
+
+* Drift Detection Agent
+* Auto Retrain Agent
+* Cost Optimization Agent
+* Incident Investigation Agent
+* Deployment Decision Agent
+
+Tức là:
+
+```
+AI vận hành AI system
+```
+
+
+
+Dưới đây là **Breakdown PHASE 2 (Month 4–6)** theo đúng nguyên tắc bạn yêu cầu:
+
+* **Lý thuyết → áp dụng ngay**
+* **Học cái gì thì triển khai cái đó vào hệ thống Phase 1**
+* **3h/ngày**
+* **Mỗi tháng có mini-project production**
+
+Phase 2 chính là giai đoạn **từ “engineer biết làm” → “production engineer thực thụ”**.
 
 ---
 
 # 🟦 PHASE 2 — PRODUCTION ENGINEERING (Month 4–6)
 
-Mục tiêu Phase 2:
-
-> Biến hệ thống từ “đúng kiến trúc” thành “chịu tải, giám sát được, tự động hóa được”.
+> Mục tiêu: biến ML Platform Phase 1 thành **production-grade system**
 
 ---
 
 # 📆 MONTH 4 — Observability & Reliability
 
-Đây là tháng cực kỳ quan trọng.
-Nếu bỏ qua, hệ thống bạn sẽ mù.
+## 🎯 Mục tiêu tháng
+
+Biến hệ thống thành **observable system**:
+
+* biết **đang chạy ra sao**
+* biết **khi nào lỗi**
+* biết **lỗi ở đâu**
+* biết **ảnh hưởng tới ai**
 
 ---
 
-## ✅ Strategic Focus — Phân tích từng mục
+# Tuần 1 — Observability Foundation
 
-### 1️⃣ Prometheus metrics design
+## 📚 Lý thuyết
 
-Không phải chỉ “cài Prometheus”.
+### 1️⃣ Three Pillars of Observability
 
-Bạn phải thiết kế:
+| Pillar  | Purpose          |
+| ------- | ---------------- |
+| Metrics | đo performance   |
+| Logs    | debug chi tiết   |
+| Traces  | theo dõi request |
 
-* Business metrics (ad click rate, prediction latency)
-* System metrics (CPU, RAM, disk)
-* ML metrics (model latency, drift indicator)
-* Kafka lag metrics
-* ClickHouse query latency
-* Training job duration
-
-→ Đây là tư duy production.
-
----
-
-### 2️⃣ Grafana dashboards
-
-Tối thiểu cần:
-
-* Infra dashboard
-* Kafka ingestion dashboard
-* ClickHouse performance dashboard
-* Model serving latency dashboard
-* Business KPI dashboard
-
-Không làm dashboard là không biết hệ thống sống hay chết.
-
----
-
-### 3️⃣ Loki centralized logging
-
-Month 1 có structured logging.
-Month 4 phải:
-
-* Ship logs từ tất cả container
-* Centralized log store
-* Query theo request-id
-* Correlate log ↔ metric
-
----
-
-### 4️⃣ Alerting rules
-
-Phải có:
-
-* High error rate alert
-* High latency alert
-* Kafka lag alert
-* Disk usage alert
-* Model serving crash alert
-
-Không alert = đợi user báo lỗi.
-
----
-
-### 5️⃣ Health probes
-
-* Liveness probe
-* Readiness probe
-* Dependency check (DB, Kafka)
-
-Phải test được container restart scenario.
-
----
-
-### 6️⃣ Chaos simulation
-
-Không phải trò đùa.
-
-* Kill Kafka
-* Kill DB
-* Delay network
-* Crash serving container
-
-Xem hệ thống có retry không.
-
----
-
-### 7️⃣ Incident report template
-
-Thiết kế template:
-
-* What happened
-* Impact
-* Root cause
-* Detection gap
-* Fix
-* Prevention
-
-Đây là mindset SRE.
-
----
-
-# 🧠 Architectural Principle — Đúng và đủ
-
-> If you can’t measure it, you can’t scale it
-> Metrics > Logs > Guessing
-
-Mình bổ sung thêm 2 nguyên tắc:
-
-* Alert fatigue kills teams
-* Observability built-in, not bolted-on
-
----
-
-# 🏗 System Architecture After Month 4
+Bạn sẽ implement:
 
 ```
-User
- ↓
-API (FastAPI)
- ↓
-Prometheus metrics exporter
- ↓
-Model Serving
- ↓
+Metrics → Prometheus
+Logs → Loki
+Dashboard → Grafana
+```
+
+---
+
+### 2️⃣ Metrics Design
+
+Hiểu các loại metric:
+
+| Metric    | Ví dụ         |
+| --------- | ------------- |
+| Counter   | request_count |
+| Gauge     | active_users  |
+| Histogram | latency       |
+
+---
+
+### 🛠 Thực hành
+
+Cài stack:
+
+```
+Prometheus
+Grafana
+Node Exporter
+```
+
+Thêm metrics cho:
+
+```
+FastAPI
 Kafka
- ↓
 ClickHouse
-
-All services → Loki
-All services → Prometheus
-Grafana → visualize
-AlertManager → notify
+Postgres
 ```
 
 ---
 
-# 📦 Deliverables End of Month 4
+### 🎯 Kết quả tuần 1
 
-* Prometheus scrape config hoàn chỉnh
-* 5 dashboard Grafana
-* 10 alert rules
-* Loki log pipeline
-* Chaos test report
-* Incident template document
+Dashboard hiển thị:
 
----
-
-# 🎯 Outcome
-
-Sau Month 4 bạn có:
-
-✔ Hệ thống không còn “mù”
-✔ Biết chính xác latency bao nhiêu
-✔ Biết Kafka có lag không
-✔ Biết model serving có crash không
-✔ Biết training job có fail không
-✔ Có incident process
+```
+API request rate
+API latency
+Kafka lag
+DB connection
+CPU RAM
+```
 
 ---
 
-# 🔥 Đây là bước chuyển quan trọng
+# Tuần 2 — Logging System
 
-Month 1–3 = Builder
-Month 4 = Production Engineer
+## 📚 Lý thuyết
+
+### Logging Strategy
+
+Production logs cần:
+
+```
+structured logs
+json format
+correlation id
+request id
+```
+
+Ví dụ:
+
+```json
+{
+ "timestamp": "...",
+ "service": "api",
+ "level": "error",
+ "message": "db timeout",
+ "request_id": "abc123"
+}
+```
 
 ---
 
-Nếu bạn tiếp tục giữ chuẩn này,
-Month 5–6 sẽ là:
+### Log pipeline
 
-* Horizontal scaling
-* Kubernetes
-* Auto-scaling
-* Blue/Green deployment
-* Canary model rollout
+```
+App
+ ↓
+Promtail
+ ↓
+Loki
+ ↓
+Grafana
+```
 
 ---
+
+### 🛠 Thực hành
+
+Cài:
+
+```
+Loki
+Promtail
+```
+
+Logs collect từ:
+
+```
+FastAPI
+Kafka
+Airflow
+ML pipeline
+```
+
 ---
+
+### 🎯 Kết quả tuần 2
+
+Grafana có thể:
+
+```
+search logs
+filter errors
+trace request
+```
+
 ---
 
+# Tuần 3 — Alerting + Health Check
 
+## 📚 Lý thuyết
 
+### Alerting Strategy
 
+Alert khi:
 
+```
+API latency > 2s
+Kafka lag > threshold
+DB connection fail
+Model prediction error
+```
 
+---
 
+### Health Probes
 
+Có 3 loại:
 
+| Probe     | Meaning             |
+| --------- | ------------------- |
+| liveness  | container sống      |
+| readiness | container sẵn sàng  |
+| startup   | container khởi động |
 
+---
 
+### 🛠 Thực hành
 
+Viết endpoint:
 
+```
+/health
+/ready
+/metrics
+```
 
+Cài alert rules:
 
+```
+Prometheus AlertManager
+```
 
+---
 
+### 🎯 Kết quả tuần 3
 
-Rồi. Month 5 là lúc bạn **biến ML system thành một cỗ máy tự vận hành**.
+Hệ thống:
 
-Nếu Month 4 là “mắt”,
-thì Month 5 là “bộ não tự động”.
+```
+tự gửi alert
+khi service lỗi
+```
+
+---
+
+# Tuần 4 — Chaos & Incident Handling
+
+## 📚 Lý thuyết
+
+### Chaos Engineering
+
+Test failure:
+
+```
+kill kafka
+kill db
+kill api
+```
+
+---
+
+### Incident Handling
+
+Incident template:
+
+```
+Incident ID
+Root cause
+Impact
+Fix
+Prevention
+```
+
+---
+
+### 🛠 Thực hành
+
+Simulation:
+
+```
+docker stop kafka
+```
+
+Xem:
+
+```
+alert
+logs
+metrics
+```
+
+---
+
+### 🎯 Mini Project Month 4
+
+Xây dashboard:
+
+```
+ML Platform Observability
+```
+
+Bao gồm:
+
+```
+API metrics
+Kafka metrics
+DB metrics
+Model metrics
+```
 
 ---
 
 # 📆 MONTH 5 — Orchestration & Automation
 
-> Từ observable → autonomous
+> Biến ML system thành **tự vận hành**
 
 ---
 
-# ✅ Strategic Focus — Phân tích chi tiết
+# Tuần 1 — Airflow Production
 
----
+## 📚 Lý thuyết
 
-## 1️⃣ Airflow Production Orchestration
+### Workflow Orchestration
 
-Không phải cài Airflow cho có.
-
-Phải làm:
-
-* DAG cho retraining
-* DAG cho feature ingestion
-* DAG cho data validation
-* DAG cho model evaluation
-* DAG cho deployment trigger
-
-Phải có:
-
-* Retry policy
-* SLA definition
-* Failure callback
-* Backfill strategy
-* DAG versioning
-
-Airflow không chỉ chạy cron —
-nó là control tower của toàn ML lifecycle.
-
----
-
-## 2️⃣ Auto Retraining Pipeline
-
-Tối thiểu:
-
-Trigger theo:
-
-* Schedule (daily/weekly)
-* Data drift threshold
-* Performance drop
-* Manual override
-
-Flow chuẩn:
+ML pipeline:
 
 ```
-Extract → Validate → Feature build → Train → Evaluate → Register → Deploy (optional)
+data → feature → train → evaluate → deploy
 ```
 
-Không có auto retrain → model chết dần.
+Airflow concepts:
+
+| Concept  | Meaning        |
+| -------- | -------------- |
+| DAG      | workflow       |
+| Task     | step           |
+| Operator | execution unit |
 
 ---
 
-## 3️⃣ Feature Versioning Strategy
+### 🛠 Thực hành
 
-Phải tách:
+Cài:
 
-* Raw event
-* Aggregated feature
-* ML-ready feature
+```
+Airflow
+```
 
-Mỗi version cần:
+DAG:
 
-* Schema version
-* Transformation code version
-* Data time range
-* Backward compatibility
-
-Không version feature → model không reproducible.
+```
+daily_training_pipeline
+```
 
 ---
 
-## 4️⃣ Model Lifecycle Automation
+# Tuần 2 — Feature Engineering Pipeline
 
-Tự động:
+## 📚 Lý thuyết
 
-* Register model vX
-* Evaluate against baseline
-* Promote nếu vượt threshold
-* Reject nếu fail
-* Archive model cũ
+Feature Store concept:
 
-Bạn đang xây mini-ML Platform.
-
----
-
-## 5️⃣ Canary Deployment
-
-Phải có:
-
-* 5–10% traffic cho model mới
-* Compare latency
-* Compare accuracy proxy
-* Auto rollback nếu vượt error threshold
-
-Đây là level production thật sự.
+```
+raw events
+ ↓
+feature transform
+ ↓
+training dataset
+```
 
 ---
 
-## 6️⃣ CI/CD Advanced (Rollback capable)
+### 🛠 Thực hành
 
-Pipeline phải:
-
-* Build image
-* Test
-* Push registry
-* Deploy
-* Health check
-* Rollback nếu fail
-
-Không rollback → deploy là đánh cược.
-
----
-
-# 🧠 Architectural Principle — ĐÚNG
-
-> Humans should not retrain models manually
-> Everything reproducible
-
-Mình bổ sung:
-
-* Automation > hero engineer
-* Deterministic pipelines > tribal knowledge
-
----
-
-# 🏗 Architecture After Month 5
+Pipeline:
 
 ```
 ClickHouse
-   ↓
-Airflow DAG
-   ↓
-Training Container
-   ↓
-MLflow
-   ↓
-Model Registry
-   ↓
-Canary Deploy
-   ↓
-Serving API
-   ↓
-Prometheus metrics
+ ↓
+Feature script
+ ↓
+dataset parquet
 ```
 
 ---
 
-# 📦 Deliverables End of Month 5
+### 🎯 Kết quả
 
-* 3 production DAG
-* Auto retraining working
-* Feature versioning spec
-* Auto promotion policy
-* Canary deploy mechanism
-* CI/CD with rollback
-* Documentation of full lifecycle
+Dataset tự generate mỗi ngày.
 
 ---
 
-# 🎯 Outcome
+# Tuần 3 — Model Lifecycle Automation
 
-Sau Month 5 bạn có:
+## 📚 Lý thuyết
 
-✔ Model tự retrain
-✔ Model tự đánh giá
-✔ Model tự deploy
-✔ Rollback tự động
-✔ Không cần manual intervention
+ML lifecycle:
 
----
-
-Bạn đã chuyển từ:
-
-ML Engineer → ML Platform Engineer
+```
+train
+evaluate
+register
+deploy
+monitor
+```
 
 ---
 
-Nếu tiếp tục đúng roadmap này,
-Month 6 sẽ là:
+### 🛠 Thực hành
 
-* Kubernetes
-* Horizontal scaling
-* Distributed training
-* Resource isolation
-* Cost optimization
-* Production HA architecture
+Airflow DAG:
+
+```
+train_model
+evaluate_model
+register_model
+deploy_model
+```
 
 ---
----
+
+### Deploy strategy
+
+```
+shadow deployment
+```
+
 ---
 
+# Tuần 4 — CI/CD Advanced
+
+## 📚 Lý thuyết
+
+CI/CD pipeline:
+
+```
+build
+test
+lint
+docker build
+deploy
+rollback
+```
+
+---
+
+### 🛠 Thực hành
+
+GitHub Actions:
+
+```
+push → build docker
+push → deploy
+fail → rollback
+```
+
+---
+
+### 🎯 Mini Project Month 5
+
+Pipeline:
+
+```
+New data
+ ↓
+Auto training
+ ↓
+Auto evaluation
+ ↓
+Auto deploy
+```
+
+---
+
+# 📆 MONTH 6 — Scaling & Optimization
+
+---
+
+# Tuần 1 — Kubernetes (k3s)
+
+## 📚 Lý thuyết
+
+Kubernetes core:
+
+| Concept    | Meaning         |
+| ---------- | --------------- |
+| Pod        | container group |
+| Service    | networking      |
+| Deployment | scaling         |
+
+---
+
+### 🛠 Thực hành
+
+Cài:
+
+```
+k3s
+```
+
+Deploy:
+
+```
+FastAPI
+Kafka
+ML API
+```
+
+---
+
+# Tuần 2 — Horizontal Scaling
+
+## 📚 Lý thuyết
+
+Scale strategies:
+
+```
+API scale
+consumer scale
+model scale
+```
+
+---
+
+### 🛠 Thực hành
+
+Scale:
+
+```
+3 API pods
+2 consumer pods
+```
+
+---
+
+# Tuần 3 — Load Testing
+
+## 📚 Lý thuyết
+
+Performance metrics:
+
+```
+RPS
+Latency
+Error rate
+```
+
+Tools:
+
+```
+k6
+locust
+```
+
+---
+
+### 🛠 Thực hành
+
+Test:
+
+```
+10k requests/min
+```
+
+---
+
+# Tuần 4 — Cost Optimization
+
+## 📚 Lý thuyết
+
+Cost drivers:
+
+```
+CPU
+Storage
+Network
+Inference
+```
+
+---
+
+### 🛠 Thực hành
+
+Profiling:
+
+```
+py-spy
+top
+htop
+```
+
+---
+
+### 🎯 Mini Project Month 6
+
+Deploy scalable system:
+
+```
+k3s cluster
+load tested
+auto deploy
+observability
+```
+
+---
+
+# 🧠 Sau PHASE 2 bạn đạt level gì
+
+Bạn sẽ có hệ thống:
+
+```
+API
+Streaming
+ML
+Observability
+Automation
+Scaling
+```
+
+Tức là:
+
+```
+Production ML Platform Engineer
+```
+
+---
+
+# 📊 Skill Tree đạt được
+
+```
+Data Engineering
+   ├── Kafka
+   ├── ClickHouse
+
+ML Ops
+   ├── MLFlow
+   ├── Airflow
+   ├── Model serving
+
+Platform Engineering
+   ├── Docker
+   ├── Kubernetes
+   ├── CI/CD
+
+Observability
+   ├── Prometheus
+   ├── Grafana
+   ├── Loki
+```
+
+---
+
+# 🚀 Bước tiếp theo cực quan trọng
+
+Nếu bạn muốn, tôi sẽ vẽ tiếp:
+
+### **FULL ML PLATFORM ARCHITECTURE sau PHASE 2**
+
+Nó sẽ giống **architecture của các công ty ML lớn**:
+
+```
+Ingress
+API
+Kafka
+Feature Store
+Airflow
+MLFlow
+Model Serving
+Prometheus
+Grafana
+Kubernetes
+```
+
+Sơ đồ này cực quan trọng vì:
+
+* bạn sẽ **build đúng system design**
+* sau này **interview ML engineer cực dễ đậu**.
