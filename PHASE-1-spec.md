@@ -1,654 +1,686 @@
-# 🟦 PHASE 1 (Month 1–3)
+Ta sẽ **breakdown PHASE 1 → cấp Sprint (2 tuần)** trước.
+Sau đó mới xuống **Week → Day → Hour**.
 
-## OBJECTIVE:
-
-Build Single-Node Production ML Platform (Designed-to-Scale)
-
----
-
-# 📆 MONTH 1 – Infrastructure & Backend Core
-
-## 🎯 Month 1 Strategic Outcome
-
-* VPS production-hardened
-* Dockerized system
-* Reverse proxy + HTTPS
-* Logging structured
-* PostgreSQL production-ready
-* Data model cho Ad Event system
-* Basic load test
-* CI/CD baseline
+Với 3h/ngày → ~21h/tuần → ~42h/sprint.
+Mỗi sprint sẽ có **deliverable production**.
 
 ---
 
-## 🔵 SPRINT STRUCTURE (Month 1)
+# 🟦 PHASE 1 — FOUNDATION ML PLATFORM
 
-Month 1 = 2 Sprints
-Each Sprint = 2 Weeks
+Thời gian: **3 tháng (~12 tuần)**
+Cấu trúc: **6 Sprint**
+
+| Sprint   | Focus                               | Outcome               |
+| -------- | ----------------------------------- | --------------------- |
+| Sprint 1 | Linux + Server Hardening + Docker   | Production-ready host |
+| Sprint 2 | Backend Core + PostgreSQL           | Production API + DB   |
+| Sprint 3 | Observability + Logging + Load test | Debuggable system     |
+| Sprint 4 | Kafka + Streaming                   | Event pipeline        |
+| Sprint 5 | ClickHouse + Analytics              | Analytics storage     |
+| Sprint 6 | MLFlow + Training + Serving         | ML lifecycle          |
 
 ---
 
-# 🟦 SPRINT 1 – Production Infrastructure Layer (Week 1–2)
-
-## 🎯 Sprint 1 Goal
-
-Deploy a secure, observable, containerized backend publicly accessible over HTTPS.
+# 🟦 MONTH 1 — PRODUCTION INFRASTRUCTURE
 
 ---
 
-## 🔹 Deliverables
+# 🚀 SPRINT 1 (Week 1–2)
 
-* Hardened VPS
-* Docker production stack
-* FastAPI service
+# Production Server & Container Platform
+
+## Strategic Goal
+
+Tạo **production server chuẩn DevOps**.
+
+Không còn kiểu:
+
+```
+python app.py
+```
+
+Mà phải là:
+
+```
+Docker
+Reverse Proxy
+HTTPS
+Firewall
+Monitoring
+```
+
+---
+
+# Knowledge Stack
+
+### Infrastructure
+
+* Linux production
+* SSH security
+* UFW firewall
+* Fail2ban
+* Docker
+* Docker Compose
+
+### Networking
+
 * Nginx reverse proxy
-* HTTPS (auto renew)
+* TLS / SSL
+* Domain routing
+
+### DevOps
+
+* Environment config
+* Secrets
+* Logging basics
+
+---
+
+# Deliverables
+
+Sprint kết thúc phải có:
+
+```
+Production Server
+│
+├── Docker Engine
+├── Docker Compose stack
+├── Nginx Reverse Proxy
+├── HTTPS TLS
+├── Firewall
+├── Fail2ban
+```
+
+Server có thể deploy service qua docker.
+
+---
+
+# System Architecture (Sprint 1)
+
+```
+Internet
+   │
+   ▼
+Nginx Reverse Proxy
+   │
+   ▼
+Docker Network
+   │
+   ├── Backend Container
+   ├── PostgreSQL Container
+   └── Future services
+```
+
+---
+
+# Bootcamp Tasks
+
+### Infrastructure Setup
+
+```
+Install Ubuntu Server
+Configure SSH
+Disable password login
+Enable key auth
+```
+
+---
+
+### Security
+
+```
+UFW firewall
+Fail2ban
+Auto security updates
+```
+
+---
+
+### Container Platform
+
+```
+Install Docker
+Install Docker Compose
+Create Docker network
+```
+
+---
+
+### Reverse Proxy
+
+```
+Nginx container
+Domain routing
+HTTPS
+Auto renew cert
+```
+
+---
+
+# Sprint 1 Mini Project
+
+Deploy:
+
+```
+FastAPI Hello World
+```
+
+Through:
+
+```
+Internet
+→ Nginx
+→ Docker
+→ FastAPI
+```
+
+Test:
+
+```
+https://api.yourdomain.com/health
+```
+
+---
+
+# 🟦 SPRINT 2 (Week 3–4)
+
+# Backend Core + PostgreSQL
+
+Sau khi có server → bắt đầu **backend core**.
+
+---
+
+# Strategic Goal
+
+Xây **production API service + database layer**.
+
+---
+
+# Knowledge Stack
+
+### Backend
+
+* FastAPI
+* REST API design
+* Dependency injection
+* Config system
+
+### Database
+
+* PostgreSQL advanced
+* Index
+* Query plan
+* Connection pool
+
+### Data Modeling
+
+* Event model
+* Ad impression schema
+
+---
+
+# Deliverables
+
+Một hệ thống:
+
+```
+API Server
+│
+├── FastAPI
+├── PostgreSQL
+├── Structured logging
+├── Migration system
+└── Health monitoring
+```
+
+---
+
+# Architecture
+
+```
+Client
+  │
+  ▼
+Nginx
+  │
+  ▼
+FastAPI
+  │
+  ▼
+PostgreSQL
+```
+
+---
+
+# Bootcamp Tasks
+
+### Backend Foundation
+
+Create project structure:
+
+```
+backend/
+ ├── api
+ ├── services
+ ├── models
+ ├── schemas
+ ├── config
+ └── main.py
+```
+
+---
+
+### Config Management
+
+```
+.env
+settings.py
+```
+
+---
+
+### Database
+
+Install:
+
+```
+PostgreSQL
+SQLAlchemy
+Alembic
+```
+
+---
+
+### Data Modeling
+
+Thiết kế bảng:
+
+```
+ad_event
+```
+
+Fields:
+
+```
+event_id
+user_id
+ad_id
+zone_id
+website_id
+timestamp
+device
+ip
+```
+
+---
+
+### Indexing
+
+Thực hành:
+
+```
+timestamp index
+user_id index
+compound index
+```
+
+---
+
+# Sprint 2 Mini Project
+
+Build API:
+
+```
+POST /ad/impression
+```
+
+Insert event vào DB.
+
+Test load:
+
+```
+1000 req/sec simulation
+```
+
+---
+
+# 🟦 MONTH 2 — STREAMING DATA PLATFORM
+
+---
+
+# 🚀 SPRINT 3 (Week 5–6)
+
+# Observability + Logging + Load Testing
+
+---
+
+# Strategic Goal
+
+System **debug được khi production crash**.
+
+---
+
+# Knowledge Stack
+
+### Observability
+
+* Prometheus
+* Grafana
+* Metrics
+
+### Logging
+
 * Structured logging
-* Project repo structure
-* Decision log + Risk log
-* Sprint report
+* JSON logs
+* Log aggregation
+
+### Testing
+
+* k6 load testing
+* latency measurement
 
 ---
 
-## 🔹 Engineering Scope
-
-### 1️⃣ Security Baseline
-
-* SSH key-only
-* Root disabled
-* Firewall rules
-* Fail2ban (optional enhancement)
-
-### 2️⃣ Containerization
-
-* Multi-stage Docker build
-* Compose-based stack
-* Environment separation
-
-### 3️⃣ API Layer
-
-* Health endpoint
-* Predict mock endpoint
-* Versioned API prefix
-
-### 4️⃣ Reverse Proxy
-
-* Nginx config
-* Rate limit
-* Timeout config
-
-### 5️⃣ HTTPS
-
-* Certbot
-* Auto renew strategy
-
-### 6️⃣ Logging
-
-* JSON structured logging
-* Log rotation
-* Log persistence volume
-
----
-
-## 🔹 Sprint KPI
-
-* Public URL live
-* HTTPS active
-* Logs visible
-* At least 12 meaningful commits
-* Decision log maintained
-
----
-
-# 🟦 SPRINT 2 – Database & Data Modeling (Week 3–4)
-
-## 🎯 Sprint 2 Goal
-
-Design and optimize relational schema for Ad Event system with production-grade DB practices.
-
----
-
-## 🔹 Deliverables
-
-* PostgreSQL containerized
-* Schema design (users, ads, events, clicks)
-* Index strategy documented
-* Query performance benchmark
-* Basic load simulation
-* Migration strategy
-* ER diagram
-* Query optimization report
-
----
-
-## 🔹 Engineering Scope
-
-### 1️⃣ PostgreSQL Production Setup
-
-* Resource limits
-* Volume persistence
-* Backup strategy (logical dump)
-
-### 2️⃣ Data Modeling
-
-Entities:
-
-* user
-* ad
-* campaign
-* event (impression, click)
-* conversion
-
-Design:
-
-* Primary keys
-* Foreign keys
-* Indexing
-* Composite index strategy
-
-### 3️⃣ Performance
-
-* EXPLAIN ANALYZE
-* Index tuning
-* Write-heavy vs read-heavy tradeoff
-
-### 4️⃣ Load Testing
-
-* Simulate event insert
-* Measure latency
-* Observe CPU & memory
-
-### 5️⃣ CI/CD Extension
-
-* Auto build + deploy DB migration
-* Basic GitHub Actions workflow
-
----
-
-## 🔹 Sprint KPI
-
-* Schema documented
-* ER diagram committed
-* Query < acceptable latency threshold
-* Load test results logged
-* Sprint retrospective written
-
----
-
-# 📊 End of Month 1 – You Must Be Able To:
-
-✔ Deploy backend public
-✔ Secure Linux server
-✔ Understand container runtime
-✔ Design relational schema
-✔ Optimize query
-✔ Run basic load test
-✔ Document architecture decisions
-
-If not achieved → Phase 1 unstable.
-
----
----
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Rồi. Vào **Month 2 – Sprint Architecture**.
-Đây là giai đoạn từ “người làm” → “người thiết kế hệ thống”.
-
----
-
-# 🧠 MONTH 2 – SPRINT ARCHITECTURE
-
-**Theme:** From Executor → System Designer
-**Mục tiêu tháng:**
-
-* Thiết kế được hệ thống AI Agent nhiều tầng
-* Áp dụng quản lý dự án vào kiến trúc
-* Biến hệ thống thành thứ có thể scale
-* Bắt đầu tư duy “quản lý đội AI”
-
----
-
-# 🗺 Tổng Quan 4 Sprint
-
-| Sprint   | Chủ đề              | Output chính                  |
-| -------- | ------------------- | ----------------------------- |
-| Sprint 5 | System Thinking     | Vẽ full AI Agent Architecture |
-| Sprint 6 | Agent Orchestration | Multi-Agent System hoạt động  |
-| Sprint 7 | Memory & Knowledge  | AI có trí nhớ & RAG           |
-| Sprint 8 | Project Governance  | Hệ thống có KPI + monitoring  |
-
----
-
-# 🧱 SPRINT 5 – SYSTEM THINKING (Tuần 5)
-
-## 🎯 Mục tiêu
-
-* Hiểu kiến trúc nhiều lớp
-* Thiết kế AI Agent như một công ty
-* Viết System Blueprint v1
-
-## 🏗 Nội dung
-
-### 1️⃣ Tư duy Layer
-
-* UI Layer
-* Control Layer
-* Agent Layer
-* Memory Layer
-* Data Layer
-* Infra Layer
-
-### 2️⃣ Vẽ kiến trúc bằng Mermaid
-
-Ví dụ khung:
-
-```mermaid
-graph TD
-    User --> API
-    API --> Orchestrator
-    Orchestrator --> Agent1
-    Orchestrator --> Agent2
-    Agent1 --> Memory
-    Agent2 --> Memory
-    Memory --> Database
+# Deliverables
+
+```
+Metrics Dashboard
+API latency metrics
+Request per second
+Error rate
 ```
 
-### 3️⃣ Deliverable tuần
+---
 
-* File: `system-architecture-v1.md`
-* 3 sơ đồ kiến trúc
-* 1 bản mô tả 1000 từ
+# Sprint 3 Mini Project
+
+Dashboard:
+
+```
+API Requests
+P95 latency
+Error rate
+CPU
+Memory
+```
 
 ---
 
-# ⚙️ SPRINT 6 – AGENT ORCHESTRATION (Tuần 6)
+# 🚀 SPRINT 4 (Week 7–8)
 
-## 🎯 Mục tiêu
-
-* Nhiều agent phối hợp
-* Có phân vai rõ ràng
-* Có workflow
-
-## 🧩 Thiết kế vai trò
-
-| Agent     | Vai trò           |
-| --------- | ----------------- |
-| Planner   | Phân tích yêu cầu |
-| Architect | Thiết kế hệ thống |
-| Coder     | Sinh code         |
-| Reviewer  | Review            |
-| Tester    | Viết test         |
-| PM Agent  | Theo dõi tiến độ  |
+# Kafka Streaming
 
 ---
 
-### 🛠 Thực hành
+# Strategic Goal
 
-* Xây 1 Multi-agent workflow
-* Dùng JSON để định nghĩa nhiệm vụ
-* Ghi log từng bước
+Thay vì:
 
----
+```
+API → DB
+```
 
-## Deliverable
+Chuyển sang:
 
-* `multi-agent-workflow.json`
-* 1 demo project chạy end-to-end
-* Log trace đầy đủ
-
----
-
-# 🧠 SPRINT 7 – MEMORY & KNOWLEDGE (Tuần 7)
-
-## 🎯 Mục tiêu
-
-* AI có trí nhớ dài hạn
-* Biết đọc tài liệu dự án
-* Có RAG pipeline
+```
+API → Kafka → Consumers
+```
 
 ---
 
-### Nội dung kỹ thuật
+# Knowledge Stack
 
-* Embedding
-* Vector DB
-* Chunking strategy
-* Retrieval pipeline
-* Context window optimization
+### Streaming
 
----
+* Kafka architecture
+* Topic
+* Partition
+* Consumer group
 
-### Thực hành
+### Data Engineering
 
-* Tạo Knowledge Base
-* Cho AI đọc docs project
-* Query theo ngữ cảnh
-
----
-
-## Deliverable
-
-* `knowledge-base/`
-* Script ingest tài liệu
-* Demo hỏi đáp theo project
+* Event schema
+* Schema versioning
+* Idempotent consumer
 
 ---
 
-# 📊 SPRINT 8 – PROJECT GOVERNANCE (Tuần 8)
+# Deliverables
 
-Đây là phần quản lý lũ AI 😄
+Kafka pipeline:
 
-## 🎯 Mục tiêu
-
-* AI có KPI
-* Có monitoring
-* Có logging
-* Có cost tracking
-
----
-
-## Nội dung
-
-### 1️⃣ KPI cho Agent
-
-* Accuracy
-* Completion rate
-* Hallucination rate
-* Time per task
-* Cost per task
-
-### 2️⃣ Dashboard
-
-* Grafana / custom dashboard
-* Token usage
-* Error rate
-
-### 3️⃣ Incident Handling
-
-* Retry logic
-* Escalation agent
-* Alert system
+```
+Ad Event
+  │
+  ▼
+Kafka Topic
+  │
+  ▼
+Consumer
+  │
+  ▼
+PostgreSQL
+```
 
 ---
 
-## Deliverable
+# Sprint 4 Mini Project
 
-* KPI spec document
-* Monitoring dashboard mockup
-* Incident playbook
+API:
 
----
+```
+POST /ad/event
+```
 
-# 🧨 Kết thúc Month 2 – Bạn sẽ trở thành:
+Publish:
 
-* System Designer
-* Multi-agent Architect
-* AI Team Manager
-* Có kiến trúc rõ ràng
-* Có governance framework
+```
+Kafka topic: ad_events
+```
 
----
-
-# 📈 Sau Month 2 bạn có:
-
-✔ AI Agent chạy thực tế
-✔ Hệ thống có kiến trúc rõ ràng
-✔ Có memory & orchestration
-✔ Có monitoring
-✔ Có KPI
+Consumer insert DB.
 
 ---
 
-Nếu Month 1 là “Bootcamp lính”,
-thì Month 2 là “Học viện sĩ quan”.
-
----
----
----
-
-
-
-
-
-
-
-
-
-
-Mark, mình check kỹ rồi — và nói thẳng:
-
-👉 **Month 1 & 2 version này logic hơn bản trước rất nhiều.**
-Nó đúng hướng nếu mục tiêu của bạn là:
-
-> Xây hệ thống Data + ML production thật sự (không phải demo toy).
-
-Và nó cực kỳ phù hợp với mục tiêu bạn từng nói:
-
-> Data Engineer + ML Ops + AI Dev + quản lý hệ thống quy mô lớn.
+# 🟦 MONTH 3 — ANALYTICS + ML LIFECYCLE
 
 ---
 
-# ✅ ĐÁNH GIÁ MONTH 1
+# 🚀 SPRINT 5 (Week 9–10)
 
-## 📆 MONTH 1 — Production Infrastructure & Backend Core
-
-### ✔ Strategic Focus — HỢP LÝ
-
-* Server hardening → đúng, vì production mindset
-* Docker production stack → bắt buộc
-* Reverse proxy + HTTPS → không có là sai kiến trúc
-* Structured logging → chuẩn DevOps
-* PostgreSQL advanced → hợp với DWH/OLTP layer
-* Data modeling (Ad Event) → đúng với bài toán bạn đang build
-* Load testing cơ bản → đúng level tháng 1
-* CI/CD baseline → phải có từ đầu
-
-### ✔ Architectural Principle — RẤT TỐT
-
-* Everything containerized → chuẩn cloud native
-* No local-only service → tránh dev anti-pattern
-* Logging-first design → rất đúng cho hệ thống ads/log lớn
-* Document every decision → đúng mindset architect
-
-### ✔ Outcome — HỢP LÝ
-
-Single-node production-ready backend + DB layer
-→ Đúng với phase 1.
+# ClickHouse Analytics
 
 ---
 
-# ✅ ĐÁNH GIÁ MONTH 2
+# Strategic Goal
 
-## 📆 MONTH 2 — Streaming & Real-Time Data Layer
-
-Cái này đúng với bài toán bạn từng nói:
-
-> 1B+ logs/day
-> Redis + Mongo + ClickHouse + MySQL
-
-### ✔ Strategic Focus — CHUẨN DATA ENGINEERING
-
-* Kafka ingestion → đúng
-* Event schema versioned → rất quan trọng
-* ClickHouse columnar → đúng cho analytics
-* Partition strategy → cực kỳ quan trọng
-* Materialized views → đúng ClickHouse mindset
-* Event → feature transformation → chuẩn ML-ready
-* Basic data validation → nên làm từ đầu
-
-### ✔ Architectural Principle — RẤT CHUẨN
-
-* Event-driven design → đúng
-* Immutable event log → Kafka chuẩn
-* Idempotent consumers → production bắt buộc
-* Schema versioning → nếu không có sẽ vỡ hệ thống
-
-### ✔ Outcome — HỢP LÝ
-
-Real-time streaming + analytics-ready storage
-→ Đúng phase Data Layer.
+Lưu **billions events** để query analytics.
 
 ---
 
-# 🔥 KẾT LUẬN
+# Knowledge Stack
 
-Month 1 & 2 version mới này:
+### Column DB
 
-* Thực tế hơn
-* Gắn chặt với bài toán ads tracking của bạn
-* Phù hợp roadmap Data + ML Ops
-* Không bị lan man AI Agent nữa
+* ClickHouse
+* Partition
+* MergeTree
 
-👉 Mình xác nhận: **Approved.**
+### Data Modeling
 
----
-
-# 🚀 GIỜ LÀM TIẾP MONTH 3
+* Time series
+* Event analytics
 
 ---
 
-# 📆 MONTH 3 — ML Lifecycle Production
+# Deliverables
 
-Đây là nơi bạn bước sang ML Ops thực chiến.
+Query:
+
+```
+Ad impressions per hour
+CTR per campaign
+Top zones
+```
 
 ---
 
-## Strategic Focus
+# Sprint 5 Mini Project
 
-* MLflow tracking server
+Pipeline:
+
+```
+Kafka
+  │
+  ▼
+ClickHouse
+```
+
+Query dashboard.
+
+---
+
+# 🚀 SPRINT 6 (Week 11–12)
+
+# ML Lifecycle Production
+
+---
+
+# Strategic Goal
+
+Build **ML Ops production flow**.
+
+---
+
+# Knowledge Stack
+
+### ML Ops
+
+* MLFlow
+* Model registry
 * Experiment tracking
-* Model registry
-* Reproducible training pipeline
-* Feature ingestion from ClickHouse
-* Containerized training job
-* Model serving API (FastAPI)
-* CI/CD auto build & deploy
-* Metrics endpoint (Prometheus-ready)
+
+### ML Platform
+
+* Training pipeline
+* Model artifact
+* Serving API
 
 ---
 
-## Architectural Principle
+# Deliverables
 
-* Model = immutable artifact
-* Data versioning required
-* Training environment isolated
-* Serving stateless
-* Registry as source of truth
-* No manual deploy
-* Observability-first
-
----
-
-## System Architecture (High Level)
+ML lifecycle:
 
 ```
-Kafka → ClickHouse → Feature Query → Training Pipeline
-                                         ↓
-                                      MLflow
-                                         ↓
-                                   Model Registry
-                                         ↓
-                                   Model Serving API
-                                         ↓
-                                      Metrics
+Training
+  │
+  ▼
+MLFlow
+  │
+  ▼
+Model Registry
+  │
+  ▼
+Model Serving API
 ```
 
 ---
 
-## Core Components
+# Sprint 6 Mini Project
 
-### 1️⃣ MLflow Server
+Build model:
 
-* Tracking URI
-* Artifact store (S3/minio/local)
-* Model registry
+```
+CTR prediction
+```
 
----
+Deploy:
 
-### 2️⃣ Training Pipeline
-
-* Data extraction from ClickHouse
-* Feature engineering
-* Train model
-* Log metrics
-* Register model
+```
+POST /predict
+```
 
 ---
 
-### 3️⃣ Model Serving Layer
+# 🧠 Kết quả PHASE 1
 
-* FastAPI inference endpoint
-* Load model from registry
-* Expose /predict
-* Expose /metrics
+Sau 3 tháng bạn sẽ có **ML platform mini**:
 
----
+```
+Internet
+   │
+   ▼
+Nginx
+   │
+   ▼
+API (FastAPI)
+   │
+   ▼
+Kafka
+   │
+   ├── PostgreSQL
+   └── ClickHouse
+            │
+            ▼
+         ML Training
+            │
+            ▼
+        MLFlow
+            │
+            ▼
+        Model Serving
+```
 
-### 4️⃣ CI/CD
-
-* Auto build Docker image
-* Auto run tests
-* Auto deploy serving container
-
----
-
-## Deliverables End of Month 3
-
-* MLflow running
-* 3 experiments logged
-* 2 model versions
-* 1 registered production model
-* Serving API live
-* Metrics exposed
-* Auto build pipeline working
-
----
-
-# 📈 Outcome
-
-You now have:
-
-✔ End-to-end ML lifecycle
-✔ Experiment reproducibility
-✔ Versioned model registry
-✔ Serving layer
-✔ Observability
-✔ Deployment automation
+Đây chính là **mini architecture của công ty ads / AI platform**.
 
 ---
 
-# 🔥 Sau Month 3 bạn chính thức là:
+# Tiếp theo (rất quan trọng)
 
-* Data Engineer
-* ML Ops Engineer
-* Production ML Builder
+Bước tiếp theo ta sẽ làm:
+
+```
+SPRINT → WEEK
+```
+
+tức là:
+
+```
+Sprint 1
+   ↓
+Week 1
+Week 2
+```
+
+rồi tiếp:
+
+```
+Week → Day
+```
+
+Sau đó mới xuống:
+
+```
+Day → 3h block
+```
+
+để thành **bootcamp thực sự**.
 
 ---
 
-Nếu Month 1 là “Hạ tầng”,
-Month 2 là “Dòng dữ liệu”,
-thì Month 3 là “Bộ não hệ thống”.
+Nếu làm đúng cách, sau **12 tuần** bạn sẽ:
 
----
----
----
+* biết **DevOps**
+* biết **Data Engineering**
+* biết **ML Ops**
+* biết **System architecture**
+* biết **production debugging**
 
+tức là level:
 
-
+```
+Senior ML Platform Engineer
+```
 
